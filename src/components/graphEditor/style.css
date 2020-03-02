@@ -1,0 +1,19 @@
+.rectangle {
+	width: 40px;
+	height: 40px;
+	object-fit: scale-down;
+	padding-left: 3px;
+}
+
+.loaded {
+	width: 50px;
+	height: 50px;
+	object-fit: scale-down;
+}
+
+.mOfn {
+	width: 30px;
+	height: 30px;
+	object-fit: scale-down;
+	padding-left: 8px;
+}
