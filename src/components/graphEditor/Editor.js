@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import undo from '../../assets/images/undo.png';
+import grid from '../../assets/images/grid.png';
 import redo from '../../assets/images/redo.png';
 import zoom_in from '../../assets/images/zoomin.png';
 import zoom_out from '../../assets/images/zoomout.png';
 import input from '../../assets/images/input.png';
+import circle from '../../assets/images/circle.png';
 import output from '../../assets/images/output.png';
 import mOfn from '../../assets/images/mofn.png';
 import loaded from '../../assets/images/loaded.png';
@@ -12,40 +13,33 @@ import rectangle from '../../assets/images/rectangle.png';
 import del from '../../assets/images/delete.png';
 import copy from '../../assets/images/copy.png';
 import paste from '../../assets/images/paste.png';
-import grid from '../../assets/images/grid.png';
 import plus from '../../assets/images/plus.png';
 import actual from '../../assets/images/actual.png';
+import mOfnEmpty from '../../assets/images/mOfnEmpty.png';
 import './style.css';
 
 import {
 	mxGraph,
+	mxGraphHandler,
 	mxConstants,
 	mxOutline,
-	mxEditor,
 	mxEdgeStyle,
 	mxCell,
 	mxGeometry,
 	mxGraphModel,
 	mxClient,
-	mxWindow,
 	mxUtils,
-	mxImage,
-	mxRectangle,
 	mxEvent,
-	mxEffects,
 	mxObjectCodec,
-	mxConnectionHandler,
-	mxPerimeter,
-	mxDivResizer,
 	mxKeyHandler,
 	mxRubberband,
 	mxToolbar,
-	mxGraphHandler,
 	mxConnectionConstraint,
 	mxPoint,
-	mxEdgeHandler,
 	mxDefaultKeyHandler,
+	mxEditor,
 } from 'mxgraph-js';
+import { Link } from 'react-router-dom';
 
 //TODO: outline dragging
 //TODO: toolbar buttons and blocks of components
@@ -80,24 +74,14 @@ class JsonCodec extends mxObjectCodec {
 }
 
 class Editor extends Component {
-	constructor(props) {
-		super(props);
-		this.loadGraph = this.loadGraph.bind(this);
-	}
-
-	componentDidMount() {
+	componentDidMount = () => {
 		this.loadGraph();
-	}
+	};
 
-	loadGraph() {
-		// Checks if browser is supported
+	loadGraph = () => {
 		if (!mxClient.isBrowserSupported()) {
-			// Displays an error message if the browser is
-			// not supported.
 			mxUtils.error('Browser is not supported!', 200, false);
 		} else {
-			mxGraphHandler.prototype.guidesEnabled = true;
-
 			const tbContainer = document.createElement('div');
 			tbContainer.style.position = 'absolute';
 			tbContainer.style.whiteSpace = 'nowrap';
@@ -111,9 +95,6 @@ class Editor extends Component {
 			tbContainer.style.background = 'yellow';
 			document.getElementById('graphContainer').appendChild(tbContainer);
 
-			const toolbar = new mxToolbar(tbContainer);
-			toolbar.enabled = false;
-
 			const sbContainer = document.createElement('div');
 			sbContainer.style.position = 'absolute';
 			sbContainer.style.overflow = 'hidden';
@@ -126,9 +107,6 @@ class Editor extends Component {
 			sbContainer.style.paddingLeft = '4px';
 			sbContainer.style.background = 'orange';
 			document.getElementById('graphContainer').appendChild(sbContainer);
-
-			const sidebar = new mxToolbar(sbContainer);
-			sidebar.enabled = false;
 
 			const container = document.createElement('div');
 			container.style.position = 'absolute';
@@ -151,22 +129,69 @@ class Editor extends Component {
 			outlineContainer.style.border = 'solid black';
 			document.getElementById('graphContainer').appendChild(outlineContainer);
 
-			// Creates the model and the graph inside the container
-			// using the fastest rendering available on the browser
+			const sidebar = new mxToolbar(sbContainer);
 			const model = new mxGraphModel();
 			const graph = new mxGraph(container, model);
+
+			var editor = new mxEditor();
+
 			new mxOutline(graph, outlineContainer);
-
-			//keyhandling:
+			const keyHandler = new mxDefaultKeyHandler(editor);
+			keyHandler.bindAction(46, 'delete');
 			//const keyHandler = new mxDefaultKeyHandler(graph);
-			//keyHandler.bindAction(46, 'delete');
+			//new mxKeyHandler(graph);
+			//new mxRubberband(graph);
 
-			new mxKeyHandler(graph);
-			new mxRubberband(graph);
+			mxGraphHandler.prototype.guidesEnabled = true;
+
+			const style = {};
+			style[mxConstants.STYLE_STROKECOLOR] = '#000';
+			style[mxConstants.STYLE_STROKEWIDTH] = '2';
+			style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
+			style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+			style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+			style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+			style[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_CLASSIC;
+			graph.getStylesheet().putDefaultEdgeStyle(style);
+
+			graph.setPanning(true);
+			graph.setConnectable(true);
+			graph.setCellsEditable(true);
+			graph.setEnabled(true);
+			graph.setHtmlLabels(true);
+			graph.centerZoom = true;
+			graph.autoSizeCellsOnAdd = true;
+
+			graph.getAllConnectionConstraints = function(terminal) {
+				if (terminal != null && this.model.isVertex(terminal.cell)) {
+					return [
+						new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+						new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+						new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+						new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+						new mxConnectionConstraint(new mxPoint(0, 1), true),
+						new mxConnectionConstraint(new mxPoint(1, 0), true),
+						new mxConnectionConstraint(new mxPoint(0, 0), true),
+						new mxConnectionConstraint(new mxPoint(1, 1), true),
+					];
+				}
+				return null;
+			};
+
+			graph.insertVertex(
+				graph.getDefaultParent(),
+				null,
+				'World!',
+				200,
+				150,
+				80,
+				30,
+			);
 
 			const addToolbarButton = (editor, toolbar, action, label, image) => {
 				const button = document.createElement('button');
 				button.style.fontSize = '10';
+				button.style.marginRight = '5px';
 				if (image != null) {
 					const img = document.createElement('img');
 					img.setAttribute('src', image);
@@ -176,14 +201,21 @@ class Editor extends Component {
 					img.style.marginRight = '2px';
 					button.appendChild(img);
 				}
-				mxEvent.addListener(button, 'click', evt => {
+				mxEvent.addListener(button, 'click', function(evt) {
 					editor.execute(action);
 				});
 				mxUtils.write(button, label);
-				//toolbar.appendChild(button);
+				toolbar.appendChild(button);
 			};
 
-			//addToolbarButton(graph, toolbar, 'delete', '', del);
+			addToolbarButton(graph, tbContainer, 'delete', '', del);
+			addToolbarButton(graph, tbContainer, 'copy', '', copy);
+			addToolbarButton(graph, tbContainer, 'paste', '', paste);
+			addToolbarButton(graph, tbContainer, 'zoomIn', '', zoom_in);
+			addToolbarButton(graph, tbContainer, 'zoomOut', '', zoom_out);
+			addToolbarButton(graph, tbContainer, 'restore', '', actual);
+			addToolbarButton(graph, tbContainer, 'undo', '', undo);
+			addToolbarButton(graph, tbContainer, 'redo', '', redo);
 
 			const addSidebarIcon = (
 				graph,
@@ -246,44 +278,53 @@ class Editor extends Component {
 				});
 			};
 
-			const setStyles = graph => {
-				const rectangleStyle = {};
-				rectangleStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-				rectangleStyle[mxConstants.STYLE_IMAGE] = rectangle;
-				graph.getStylesheet().putCellStyle('rectangle', rectangleStyle);
-				addVertex(rectangle, 70, 70, 'rectangle', 'rectangle');
+			const rectangleStyle = {};
+			rectangleStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
+			rectangleStyle[mxConstants.STYLE_IMAGE] = rectangle;
+			rectangleStyle[mxConstants.STYLE_PERIMETER] =
+				mxConstants.PERIMETER_RECTANGLE;
+			graph.getStylesheet().putCellStyle('rectangle', rectangleStyle);
+			addVertex(rectangle, 70, 52, 'rectangle', 'rectangle');
 
-				const mOfNStyle = {};
-				mOfNStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-				mOfNStyle[mxConstants.STYLE_IMAGE] = mOfn;
-				graph.getStylesheet().putCellStyle('mOfn', mOfNStyle);
-				addVertex(mOfn, 50, 50, 'mOfn', 'mOfn');
+			const mOfNStyle = {};
+			mOfNStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
+			mOfNStyle[mxConstants.STYLE_IMAGE] = mOfnEmpty;
+			mOfNStyle[mxConstants.STYLE_PERIMETER] = mxConstants.PERIMETER_ELLIPSE;
+			graph.getStylesheet().putCellStyle('mOfn', mOfNStyle);
+			addVertex(mOfn, 50, 50, 'mOfn', 'mOfn');
 
-				const inputStyle = {};
-				inputStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-				inputStyle[mxConstants.STYLE_IMAGE] = input;
-				graph.getStylesheet().putCellStyle('input', inputStyle);
-				addVertex(input, 40, 40, 'input');
+			const inputStyle = {};
+			inputStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
+			inputStyle[mxConstants.STYLE_IMAGE] = circle;
+			graph.getStylesheet().putCellStyle('input', inputStyle);
+			addVertex(input, 15, 15, 'input');
 
-				const outputStyle = {};
-				outputStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-				outputStyle[mxConstants.STYLE_IMAGE] = output;
-				graph.getStylesheet().putCellStyle('output', outputStyle);
-				addVertex(output, 40, 40, 'output');
+			const outputStyle = {};
+			outputStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
+			outputStyle[mxConstants.STYLE_IMAGE] = circle;
+			graph.getStylesheet().putCellStyle('output', outputStyle);
+			addVertex(output, 15, 15, 'output');
 
-				const loadedStyle = {};
-				loadedStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-				loadedStyle[mxConstants.STYLE_IMAGE] = loaded;
-				graph.getStylesheet().putCellStyle('loaded', loadedStyle);
-				addVertex(loaded, 80, 80, 'loaded', 'loaded');
-			};
-
-			setStyles(graph);
+			const loadedStyle = {};
+			loadedStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
+			loadedStyle[mxConstants.STYLE_IMAGE] = loaded;
+			graph.getStylesheet().putCellStyle('loaded', loadedStyle);
+			addVertex(loaded, 80, 56, 'loaded', 'loaded');
 		}
-	}
+	};
 
 	render() {
-		return <div id="graphContainer" />;
+		return (
+			<>
+				<div id="graphContainer" />
+				<Link
+					to={'/calculator'}
+					style={{ position: 'absolute', top: '10px', right: '20px' }}
+				>
+					Calc
+				</Link>
+			</>
+		);
 	}
 }
 

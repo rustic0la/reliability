@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 class Calculator extends React.Component {
 	constructor(props) {
@@ -95,6 +96,7 @@ class Calculator extends React.Component {
 	render() {
 		return (
 			<>
+				<Link to={'/mxgraph'}>Back</Link>
 				<div className="form-group">
 					<div className="form-item">
 						Назначение:
