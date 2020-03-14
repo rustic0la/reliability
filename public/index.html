@@ -6,5 +6,20 @@
 	</head>
 	<body>
 		<div id="root"></div>
+		<button id="close-btn">Exit</button>
+		<script>
+			const { ipcRenderer } = require('electron');
+
+			const exitBtn = document.getElementById('close-btn');
+			exitBtn.classList = 'button btn btn-secondary';
+			exitBtn.style.fontSize = '14px';
+			exitBtn.style.padding = '6px 10px';
+			exitBtn.style.margin = '10px 120px';
+			exitBtn.style.width = '50%';
+
+			exitBtn.addEventListener('click', _ => {
+				ipcRenderer.send('closed');
+			});
+		</script>
 	</body>
 </html>

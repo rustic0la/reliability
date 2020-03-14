@@ -11,9 +11,77 @@
 	object-fit: scale-down;
 }
 
+#graphContainer {
+	max-width: 500px;
+	width: 100%;
+}
+
 .mOfn {
 	width: 30px;
 	height: 30px;
 	object-fit: scale-down;
 	padding-left: 8px;
+}
+
+div.mxCellEditor.mxPlainTextEditor {
+	position: absolute;
+}
+
+div.mxRubberband {
+	position: absolute;
+	overflow: hidden;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #00a2ff;
+	background: #0077ff;
+}
+
+div.outlineContainer {
+	position: absolute;
+	overflow: hidden;
+	top: 36px;
+	right: 0px;
+	width: 200px;
+	height: 140px;
+	background: transparent;
+	border: solid black;
+}
+
+div.sbContainer {
+	position: absolute;
+	overflow: hidden;
+	top: 36px;
+	left: 0px;
+	bottom: 0px;
+	width: 56px;
+	padding-top: 10px;
+	padding-left: 4px;
+	background: rgb(93, 131, 180);
+}
+
+div.tbContainer {
+	position: absolute;
+	white-space: nowrap;
+	overflow: hidden;
+	top: 0px;
+	left: 0px;
+	font-size: 12px;
+	right: 0px;
+	padding: 6px 66px;
+	background: rgb(57, 81, 109);
+}
+
+div.container {
+	background: url('../../assets/images/grid.png');
+	position: absolute;
+	overflow: hidden;
+	top: 36px;
+	left: 56px;
+	bottom: 0px;
+	right: 0px;
+	max-width: 2000px;
+}
+
+* {
+	box-sizing: content-box;
 }

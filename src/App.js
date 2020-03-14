@@ -1,21 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Calculator from './components/math/Calc';
+import Calculator from './components/graphEditor/Calc';
 import Editor from './components/graphEditor/Editor';
 import Menu from './components/Menu';
 import './App.css';
 
-function App() {
-	return (
-		<Router>
-			<Switch>
-				<Route path="/" exact component={Menu} />
-				<Route path="/calculator" exact component={Calculator} />
-				<Route path="/mxgraph" exact component={Editor} />
-				<Route path="/results" />
-			</Switch>
-		</Router>
-	);
-}
+const App = () => (
+	<Router>
+		<Switch>
+			<Route path="/" exact component={Menu} />
+			<Route path="/calculator" exact component={Calculator} />
+			<Route path="/mxgraph" exact component={Editor} />
+			<Route path="/results" />
+		</Switch>
+	</Router>
+);
 
 export default App;
