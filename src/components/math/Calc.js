@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import undo from '../../assets/images/undo.png';
-import { calculate } from '../math/compute';
+import { calculate } from './compute';
 
 const Calculator = () => {
 	const [params, setParams] = useState({
@@ -18,7 +18,6 @@ const Calculator = () => {
 	const handleShow = () => {
 		setShow(true);
 		handleCalculateClick();
-		console.log('111', localStorage.getItem('json'));
 	};
 
 	const changeInputDropdown = async id => {
@@ -29,7 +28,7 @@ const Calculator = () => {
 
 	const handleCalculateClick = async () => {
 		const { purpose, recovery, techService, applicationMode } = params;
-		setOutput(calculate(JSON.parse(localStorage.getItem('json'))));
+		setOutput(localStorage.getItem('json'));
 		/*
 		let param;
 		switch (recovery) {
@@ -114,25 +113,6 @@ const Calculator = () => {
 			{ value: 'конкретное', text: 'Конкретное' },
 			{ value: 'общее', text: 'Общее' },
 		],
-	};
-
-	const Selector = ({ id }) => {
-		return (
-			<>
-				<br />
-				<select
-					className="form-control"
-					id={id}
-					onChange={() => changeInputDropdown(id)}
-				>
-					{data[id].map(({ value, text }) => (
-						<option value={value} key={value}>
-							{text}
-						</option>
-					))}
-				</select>
-			</>
-		);
 	};
 
 	return (
@@ -224,17 +204,9 @@ const Calculator = () => {
 			</Button>
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
-					<Modal.Title>Modal heading</Modal.Title>
+					<Modal.Title>Structure JSON</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>
-					<input
-						type="text"
-						className="output"
-						placeholder="result"
-						disabled
-						value={output}
-					/>
-				</Modal.Body>
+				<Modal.Body>{output}</Modal.Body>
 				<Modal.Footer>
 					<Button variant="secondary" onClick={handleClose}>
 						Close

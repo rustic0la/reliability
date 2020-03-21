@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Calculator from './components/graphEditor/Calc';
+import Calculator from './components/math/Calc';
 import Editor from './components/graphEditor/Editor';
 import Menu from './components/Menu';
 import './App.css';

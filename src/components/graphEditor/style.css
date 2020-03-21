@@ -23,6 +23,13 @@
 	padding-left: 8px;
 }
 
+.joint {
+	width: 30px;
+	height: 30px;
+	object-fit: scale-down;
+	padding-left: 8px;
+}
+
 div.mxCellEditor.mxPlainTextEditor {
 	position: absolute;
 }

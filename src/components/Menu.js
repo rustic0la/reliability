@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 function Menu() {
 	const handleClick = () => {
 		localStorage.setItem('json', '');
+		document.getElementById('close-btn').style.visibility = 'hidden';
 	};
 	return (
 		<div className="App">
