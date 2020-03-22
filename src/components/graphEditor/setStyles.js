@@ -16,9 +16,9 @@ export const setGraphStyle = (graph, undoManager) => {
 	graph.setCellsEditable(true);
 	graph.setEnabled(true);
 	graph.dropEnabled = true;
-	graph.centerZoom = false;
+	graph.centerZoom = true;
 	graph.setAllowDanglingEdges(false);
-	graph.gridSize = 1;
+	graph.gridSize = 5;
 	graph.setMultigraph = false;
 
 	mxEdgeHandler.prototype.parentHighlightEnabled = true;
@@ -53,6 +53,7 @@ export const setDefaultCellsStyle = graph => {
 	edgeStyle[mxConstants.STYLE_STROKEWIDTH] = '2';
 	edgeStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
 	edgeStyle[mxConstants.STYLE_EDGE] = mxEdgeStyle.EntityRelation;
+	edgeStyle[mxConstants.STYLE_JETTY_SIZE] = 'auto';
 	edgeStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_NONE;
 	edgeStyle[mxConstants.STYLE_FONTSIZE] = '16';
 	edgeStyle[mxConstants.VALID_COLOR] = '#000';
@@ -77,10 +78,7 @@ export const setDefaultCellsStyle = graph => {
 export const setVertexStyles = graph => {
 	const rectangleStyle = {};
 	rectangleStyle[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
-	rectangleStyle[mxConstants.STYLE_SHAPE] = 'swimlane';
-	rectangleStyle[mxConstants.STYLE_STARTSIZE] = 15;
-	rectangleStyle[mxConstants.STYLE_SWIMLANE_FILLCOLOR] = '#fff';
-	rectangleStyle[mxConstants.STYLE_SWIMLANE_LINE] = 0;
+	rectangleStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
 	graph.getStylesheet().putCellStyle('rectangle', rectangleStyle);
 
 	const mOfNStyle = {};

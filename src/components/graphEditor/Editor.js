@@ -9,6 +9,8 @@ import {
 	mxRubberband,
 	mxHierarchicalLayout,
 	mxEdgeHandler,
+	mxUtils,
+	mxEventObject,
 } from 'mxgraph-js';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
@@ -38,6 +40,7 @@ import {
 	getJsonModel,
 	stringifyWithoutCircular,
 } from './jsonCodec';
+import showModalWindow from './showModal';
 import './style.css';
 
 //TODO folding = container
@@ -107,29 +110,24 @@ const Editor = () => {
 		addVertex(graph, sidebar, output, 35, 35, 'output');
 		addVertex(graph, sidebar, loaded, 80, 56, 'loaded', 'loaded');
 
-		mxConstants.ENTITY_SEGMENT = 25;
+		mxConstants.ENTITY_SEGMENT = 50;
 
 		const layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
-		mxHierarchicalLayout.prototype.resizeParent = true;
-		mxHierarchicalLayout.prototype.marginBottom = 10;
-		mxHierarchicalLayout.prototype.marginTop = 10;
-		mxHierarchicalLayout.prototype.maintainParentLocation = true;
-		mxHierarchicalLayout.prototype.moveParent = true;
-		mxHierarchicalLayout.prototype.parentBorder = 0;
-		mxHierarchicalLayout.prototype.intraCellSpacing = 10;
-		mxHierarchicalLayout.prototype.interRankCellSpacing = 50;
-		mxHierarchicalLayout.prototype.interHierarchySpacing = 50;
-		mxHierarchicalLayout.prototype.parallelEdgeSpacing = 20;
-		mxHierarchicalLayout.prototype.orientation = 'north';
-		mxHierarchicalLayout.prototype.fineTuning = false;
-		mxHierarchicalLayout.prototype.tightenToSource = false;
-		mxHierarchicalLayout.prototype.disableEdgeStyle = false;
-		mxHierarchicalLayout.prototype.edgeStyle = 2;
-		mxHierarchicalLayout.prototype.traverseAncestors = false;
 
 		var executeLayout = function(change, post) {
 			graph.getModel().beginUpdate();
 			try {
+				mxHierarchicalLayout.prototype.resizeParent = true;
+				mxHierarchicalLayout.prototype.maintainParentLocation = true;
+				mxHierarchicalLayout.prototype.moveParent = true;
+				mxHierarchicalLayout.prototype.intraCellSpacing = 15;
+				mxHierarchicalLayout.prototype.interRankCellSpacing = 100;
+				mxHierarchicalLayout.prototype.interHierarchySpacing = 100;
+				mxHierarchicalLayout.prototype.parallelEdgeSpacing = 0;
+				mxHierarchicalLayout.prototype.fineTuning = true;
+				mxHierarchicalLayout.prototype.tightenToTarget = true;
+				mxHierarchicalLayout.prototype.disableEdgeStyle = false;
+				mxHierarchicalLayout.prototype.traverseAncestors = true;
 				layout.execute(graph.getDefaultParent());
 			} catch (e) {
 				throw e;
@@ -138,6 +136,53 @@ const Editor = () => {
 			}
 		};
 
+		/////////////////////////////////////////
+		graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
+			return createPopupMenu(graph, menu, cell, evt);
+		};
+
+		const createPopupMenu = (graph, menu, cell, evt) => {
+			if (cell) {
+				if (cell.edge === true) {
+					menu.addItem('Delete connection', null, function() {
+						graph.removeCells([cell]);
+						mxEvent.consume(evt);
+					});
+				} else {
+					menu.addItem('Edit child node', null, function() {
+						if (
+							graph.isEnabled() &&
+							!mxEvent.isConsumed(evt) &&
+							cell != null &&
+							graph.isCellEditable(cell)
+						) {
+							if (graph.model.isEdge(cell)) {
+								graph.startEditingAtCell(cell);
+							} else {
+								const modalCont = document.createElement('div');
+								modalCont.id = 'modal';
+								modalCont.className = 'modalCont';
+
+								showModalWindow(
+									graph,
+									'Child nodes',
+									modalCont,
+									400,
+									300,
+									cell,
+								);
+							}
+						}
+					});
+					menu.addItem('Delete child node', null, function() {
+						graph.removeCells([cell]);
+						mxEvent.consume(evt);
+					});
+				}
+			}
+		};
+
+		/////////////////////////////////////////////////////
 		const edgeHandleConnect = mxEdgeHandler.prototype.connect;
 		mxEdgeHandler.prototype.connect = function(
 			edge,
@@ -160,8 +205,8 @@ const Editor = () => {
 		});
 
 		if (localStorage.getItem('json') !== '') {
-			setDefaultCellsStyle(graph);
-			renderJSON(JSON.parse(localStorage.getItem('json')), graph, layout);
+			renderJSON(JSON.parse(localStorage.getItem('json')), graph);
+			executeLayout();
 		}
 	};
 

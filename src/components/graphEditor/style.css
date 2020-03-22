@@ -12,7 +12,6 @@
 }
 
 #graphContainer {
-	max-width: 500px;
 	width: 100%;
 }
 
@@ -46,7 +45,7 @@ div.mxRubberband {
 div.outlineContainer {
 	position: absolute;
 	overflow: hidden;
-	top: 36px;
+	bottom: 0px;
 	right: 0px;
 	width: 200px;
 	height: 140px;
@@ -86,9 +85,29 @@ div.container {
 	left: 56px;
 	bottom: 0px;
 	right: 0px;
-	max-width: 2000px;
+	margin: 0px;
+	padding: 20px;
+	max-width: 100%;
 }
 
 * {
 	box-sizing: content-box;
+}
+
+div.mxWindowPane {
+	position: inherit;
+}
+
+div.mxWindow {
+	border: 1px solid grey;
+}
+
+.modalCont {
+	background: url('../../assets/images/grid.png');
+	position: absolute;
+	overflow: hidden;
+	top: 20px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
 }

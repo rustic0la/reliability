@@ -22,6 +22,8 @@ export const getJsonModel = graph => {
 	};
 };
 
+//TODO filter json props
+
 export const stringifyWithoutCircular = json => {
 	return JSON.stringify(
 		json,
@@ -46,7 +48,7 @@ export const stringifyWithoutCircular = json => {
 	);
 };
 
-export const renderJSON = (dataModel, graph, layout) => {
+export const renderJSON = (dataModel, graph) => {
 	let vertices = {};
 	const parent = graph.getDefaultParent();
 	graph.getModel().beginUpdate(); // Adds cells to the model in a single step
@@ -76,7 +78,6 @@ export const renderJSON = (dataModel, graph, layout) => {
 					);
 				}
 			});
-		layout.execute(graph.getDefaultParent());
 	} finally {
 		graph.getModel().endUpdate();
 	}
