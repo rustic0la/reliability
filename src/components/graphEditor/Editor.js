@@ -3,45 +3,21 @@ import {
 	mxGraph,
 	mxConstants,
 	mxOutline,
-	mxEvent,
 	mxToolbar,
-	mxUndoManager,
 	mxRubberband,
 	mxHierarchicalLayout,
-	mxEdgeHandler,
-	mxUtils,
-	mxEventObject,
 } from 'mxgraph-js';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
-import undo from '../../assets/images/undo.png';
-import redo from '../../assets/images/redo.png';
-import zoom_in from '../../assets/images/zoomin.png';
-import zoom_out from '../../assets/images/zoomout.png';
-import del from '../../assets/images/delete.png';
-import actual from '../../assets/images/actual.png';
-import rectangle from '../../assets/images/rectangle.png';
-import output from '../../assets/images/output.png';
-import mOfn from '../../assets/images/mofn.png';
-import input from '../../assets/images/input.png';
-import loaded from '../../assets/images/loaded.png';
-import joint from '../../assets/images/joint.png';
-
-import {
-	setDefaultCellsStyle,
-	setVertexStyles,
-	setGraphStyle,
-} from './setStyles';
-import addVertex from './addVertex';
-import addToolbarButton from './addToolbar';
 import {
 	renderJSON,
 	getJsonModel,
 	stringifyWithoutCircular,
 } from './jsonCodec';
-import showModalWindow from './showModal';
 import './style.css';
+import executeLayout from './layout';
+import setBaseConfig from './setBaseConfig';
 
 //TODO folding = container
 //TODO list of components ADD CUSTOMS
@@ -58,8 +34,6 @@ const Editor = () => {
 		loadGraph(graph, container, tbContainer, sbContainer, outlnContainer);
 	});
 
-	//////////////////////////////// TOOLBAR BUTTONS & HANDLERS
-
 	const loadGraph = (
 		graph,
 		container,
@@ -67,7 +41,6 @@ const Editor = () => {
 		sbContainer,
 		outlineContainer,
 	) => {
-		//////////////////////// CREATE DIVS
 		container.className = 'container';
 		document.getElementById('graphContainer').appendChild(container);
 
@@ -80,133 +53,16 @@ const Editor = () => {
 		outlineContainer.className = 'outlineContainer';
 		document.getElementById('graphContainer').appendChild(outlineContainer);
 
-		////////////////////// GRAPH EDITOR STYLES
-		const undoManager = new mxUndoManager();
-		const listener = function(sender, evt) {
-			undoManager.undoableEditHappened(evt.getProperty('edit'));
-		};
-		graph.getModel().addListener(mxEvent.UNDO, listener);
-		graph.getView().addListener(mxEvent.UNDO, listener);
+		const layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
 
-		setGraphStyle(graph, undoManager);
+		setBaseConfig(graph, tbContainer, sidebar, layout);
+
 		new mxOutline(graph, outlineContainer);
 		new mxRubberband(graph);
 
-		//////////////////////////// TOOLBAR
-		addToolbarButton(null, graph, tbContainer, 'delete', del);
-		addToolbarButton(null, graph, tbContainer, 'zoomIn', zoom_in);
-		addToolbarButton(null, graph, tbContainer, 'zoomOut', zoom_out);
-		addToolbarButton(null, graph, tbContainer, 'zoomActual', actual);
-		addToolbarButton(undoManager, graph, tbContainer, 'undo', undo);
-		addToolbarButton(undoManager, graph, tbContainer, 'redo', redo);
-
-		setDefaultCellsStyle(graph);
-		setVertexStyles(graph);
-
-		addVertex(graph, sidebar, rectangle, 60, 42, 'rectangle', 'rectangle');
-		addVertex(graph, sidebar, joint, 10, 10, 'joint', 'joint');
-		addVertex(graph, sidebar, mOfn, 45, 45, 'mOfn', 'mOfn');
-		addVertex(graph, sidebar, input, 35, 35, 'input');
-		addVertex(graph, sidebar, output, 35, 35, 'output');
-		addVertex(graph, sidebar, loaded, 80, 56, 'loaded', 'loaded');
-
-		mxConstants.ENTITY_SEGMENT = 50;
-
-		const layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
-
-		var executeLayout = function(change, post) {
-			graph.getModel().beginUpdate();
-			try {
-				mxHierarchicalLayout.prototype.resizeParent = true;
-				mxHierarchicalLayout.prototype.maintainParentLocation = true;
-				mxHierarchicalLayout.prototype.moveParent = true;
-				mxHierarchicalLayout.prototype.intraCellSpacing = 15;
-				mxHierarchicalLayout.prototype.interRankCellSpacing = 100;
-				mxHierarchicalLayout.prototype.interHierarchySpacing = 100;
-				mxHierarchicalLayout.prototype.parallelEdgeSpacing = 0;
-				mxHierarchicalLayout.prototype.fineTuning = true;
-				mxHierarchicalLayout.prototype.tightenToTarget = true;
-				mxHierarchicalLayout.prototype.disableEdgeStyle = false;
-				mxHierarchicalLayout.prototype.traverseAncestors = true;
-				layout.execute(graph.getDefaultParent());
-			} catch (e) {
-				throw e;
-			} finally {
-				graph.getModel().endUpdate();
-			}
-		};
-
-		/////////////////////////////////////////
-		graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
-			return createPopupMenu(graph, menu, cell, evt);
-		};
-
-		const createPopupMenu = (graph, menu, cell, evt) => {
-			if (cell) {
-				if (cell.edge === true) {
-					menu.addItem('Delete connection', null, function() {
-						graph.removeCells([cell]);
-						mxEvent.consume(evt);
-					});
-				} else {
-					menu.addItem('Edit child node', null, function() {
-						if (
-							graph.isEnabled() &&
-							!mxEvent.isConsumed(evt) &&
-							cell != null &&
-							graph.isCellEditable(cell)
-						) {
-							if (graph.model.isEdge(cell)) {
-								graph.startEditingAtCell(cell);
-							} else {
-								const modalCont = document.createElement('div');
-								modalCont.id = 'modal';
-								modalCont.className = 'modalCont';
-
-								showModalWindow(
-									graph,
-									'Child nodes',
-									modalCont,
-									400,
-									300,
-									cell,
-								);
-							}
-						}
-					});
-					menu.addItem('Delete child node', null, function() {
-						graph.removeCells([cell]);
-						mxEvent.consume(evt);
-					});
-				}
-			}
-		};
-
-		/////////////////////////////////////////////////////
-		const edgeHandleConnect = mxEdgeHandler.prototype.connect;
-		mxEdgeHandler.prototype.connect = function(
-			edge,
-			terminal,
-			isSource,
-			isClone,
-			me,
-		) {
-			edgeHandleConnect.apply(this, arguments);
-			executeLayout();
-		};
-
-		graph.resizeCell = function() {
-			mxGraph.prototype.resizeCell.apply(this, arguments);
-			executeLayout();
-		};
-
-		graph.connectionHandler.addListener(mxEvent.CONNECT, function() {
-			executeLayout();
-		});
-
 		if (localStorage.getItem('json') !== '') {
 			renderJSON(JSON.parse(localStorage.getItem('json')), graph);
-			executeLayout();
+			executeLayout(graph, layout);
 		}
 	};
 

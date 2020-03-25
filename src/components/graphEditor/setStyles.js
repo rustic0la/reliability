@@ -53,7 +53,6 @@ export const setDefaultCellsStyle = graph => {
 	edgeStyle[mxConstants.STYLE_STROKEWIDTH] = '2';
 	edgeStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
 	edgeStyle[mxConstants.STYLE_EDGE] = mxEdgeStyle.EntityRelation;
-	edgeStyle[mxConstants.STYLE_JETTY_SIZE] = 'auto';
 	edgeStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_NONE;
 	edgeStyle[mxConstants.STYLE_FONTSIZE] = '16';
 	edgeStyle[mxConstants.VALID_COLOR] = '#000';

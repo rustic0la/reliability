@@ -7,7 +7,6 @@ const addSidebarIcon = (
 	image,
 	imgStyle = 'rectangle',
 ) => {
-	console.log(graph, sidebar, prototype, image, imgStyle);
 	const funct = (graph, evt, cell, x, y, imgStyle) => {
 		graph.stopEditing(false);
 
