@@ -26,10 +26,11 @@ import mOfn from '../../assets/images/mofn.png';
 import input from '../../assets/images/input.png';
 import loaded from '../../assets/images/loaded.png';
 import joint from '../../assets/images/joint.png';
+import save from '../../assets/images/save.png';
 
 const setBaseConfig = (graph, tbContainer, sidebar, layout) => {
 	const undoManager = new mxUndoManager();
-	const listener = function(sender, evt) {
+	const listener = function (sender, evt) {
 		undoManager.undoableEditHappened(evt.getProperty('edit'));
 	};
 	graph.getModel().addListener(mxEvent.UNDO, listener);
@@ -43,28 +44,29 @@ const setBaseConfig = (graph, tbContainer, sidebar, layout) => {
 	addToolbarButton(null, graph, tbContainer, 'zoomActual', actual);
 	addToolbarButton(undoManager, graph, tbContainer, 'undo', undo);
 	addToolbarButton(undoManager, graph, tbContainer, 'redo', redo);
+	addToolbarButton(null, graph, tbContainer, 'save', save);
 
 	setDefaultCellsStyle(graph);
 	setVertexStyles(graph);
 
-	addVertex(graph, sidebar, rectangle, 60, 42, 'rectangle', 'rectangle');
+	addVertex(graph, sidebar, rectangle, 70, 42, 'rectangle', 'rectangle');
 	addVertex(graph, sidebar, joint, 10, 10, 'joint', 'joint');
 	addVertex(graph, sidebar, mOfn, 45, 45, 'mOfn', 'mOfn');
 	addVertex(graph, sidebar, input, 35, 35, 'input');
 	addVertex(graph, sidebar, output, 35, 35, 'output');
-	addVertex(graph, sidebar, loaded, 80, 56, 'loaded', 'loaded');
+	addVertex(graph, sidebar, loaded, 70, 56, 'loaded', 'loaded');
 
 	mxConstants.ENTITY_SEGMENT = 20;
 
-	graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
-		if (cell.style === 'rectangle') {
+	graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+		if (cell && cell.style === 'rectangle') {
 			return createPopupMenu(graph, menu, cell, evt);
 		}
 	};
 
 	/////////////////////////////////////////////////////
 	const edgeHandleConnect = mxEdgeHandler.prototype.connect;
-	mxEdgeHandler.prototype.connect = function(
+	mxEdgeHandler.prototype.connect = function (
 		edge,
 		terminal,
 		isSource,
@@ -75,12 +77,12 @@ const setBaseConfig = (graph, tbContainer, sidebar, layout) => {
 		executeLayout(graph, layout);
 	};
 
-	graph.resizeCell = function() {
+	graph.resizeCell = function () {
 		mxGraph.prototype.resizeCell.apply(this, arguments);
 		executeLayout(graph, layout);
 	};
 
-	graph.connectionHandler.addListener(mxEvent.CONNECT, function() {
+	graph.connectionHandler.addListener(mxEvent.CONNECT, function () {
 		executeLayout(graph, layout);
 	});
 };

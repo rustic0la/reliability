@@ -1,4 +1,11 @@
 import { mxEvent, mxUtils } from 'mxgraph-js';
+import { getJsonModel, stringifyWithoutCircular } from './jsonCodec';
+
+const saveJson = (graph) => {
+	const jsonNodes = getJsonModel(graph);
+	const jsonStr = stringifyWithoutCircular(jsonNodes);
+	localStorage.setItem('json', jsonStr);
+};
 
 const addToolbarButton = (
 	undoManager,
@@ -20,7 +27,7 @@ const addToolbarButton = (
 		img.style.marginRight = '2px';
 		button.appendChild(img);
 	}
-	mxEvent.addListener(button, 'click', function() {
+	mxEvent.addListener(button, 'click', function () {
 		switch (action) {
 			case 'delete':
 				graph.removeCells();
@@ -39,6 +46,9 @@ const addToolbarButton = (
 				break;
 			case 'redo':
 				undoManager.redo();
+				break;
+			case 'save': // TODO fix save
+				saveJson(graph);
 				break;
 			default:
 				break;

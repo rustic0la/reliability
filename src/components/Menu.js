@@ -4,9 +4,9 @@ import { Button } from 'react-bootstrap';
 
 function Menu() {
 	const handleClick = () => {
-		localStorage.setItem('json', '');
-		document.getElementById('close-btn').style.visibility = 'hidden';
+		localStorage.clear();
 	};
+
 	return (
 		<div className="App">
 			<header className="App-header">Расчетный модуль надежности</header>

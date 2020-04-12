@@ -27,11 +27,11 @@ function createWindow() {
 
 const installExtensions = async () => {
 	installExtension(REACT_DEVELOPER_TOOLS)
-		.then(name => console.log(`Added Extension:  ${name}`))
-		.catch(err => console.log('An error occurred: ', err));
+		.then((name) => console.log(`Added Extension:  ${name}`))
+		.catch((err) => console.log('An error occurred: ', err));
 };
 
-ipcMain.on('closed', _ => {
+ipcMain.on('closed', (_) => {
 	mainWindow = null;
 	if (process.platform !== 'darwin') {
 		app.quit();

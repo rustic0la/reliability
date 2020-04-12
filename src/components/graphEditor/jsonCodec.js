@@ -2,50 +2,49 @@ import { mxObjectCodec } from 'mxgraph-js';
 
 class JsonCodec extends mxObjectCodec {
 	constructor() {
-		super(value => {});
+		super((value) => {});
 	}
 	decode(model) {
 		return Object.keys(model.cells)
-			.map(iCell => {
+			.map((iCell) => {
 				const currentCell = model.getCell(iCell);
 				return currentCell.value !== undefined ? currentCell : null;
 			})
-			.filter(item => item !== null);
+			.filter((item) => item !== null);
 	}
 }
 
-export const getJsonModel = graph => {
+export const getJsonModel = (graph) => {
 	const encoder = new JsonCodec();
 	const jsonModel = encoder.decode(graph.getModel());
-	return {
-		graph: jsonModel,
-	};
+	return jsonModel;
 };
 
-//TODO filter json props
-
-export const stringifyWithoutCircular = json => {
-	return JSON.stringify(
-		json,
-		(key, value) => {
-			if (
-				(key === 'parent' || key === 'source' || key === 'target') &&
-				value !== null
-			) {
-				return value.id;
-			} else if (key === 'value' && value !== null && value.localName) {
-				let results = {};
-				Object.keys(value.attributes).forEach(attrKey => {
-					const attribute = value.attributes[attrKey];
-
-					results[attribute.nodeName] = attribute.nodeValue;
-				});
-				return results;
-			}
-			return value;
-		},
-		4,
-	);
+export const stringifyWithoutCircular = (json) => {
+	const iter = (data) =>
+		JSON.stringify(
+			data,
+			(key, value) => {
+				if (
+					(key === 'parent' || key === 'source' || key === 'target') &&
+					value !== null
+				) {
+					return value.id;
+				} else if (key === 'value' && value !== null && value.localName) {
+					let results = {};
+					Object.keys(value.attributes).forEach((attrKey) => {
+						const attribute = value.attributes[attrKey];
+						results[attribute.nodeName] = attribute.nodeValue;
+					});
+					return results;
+				} else if (key === 'children' && value !== null) {
+					iter(value);
+				}
+				return value;
+			},
+			4,
+		);
+	return iter(json);
 };
 
 export const renderJSON = (dataModel, graph) => {
@@ -55,7 +54,7 @@ export const renderJSON = (dataModel, graph) => {
 	try {
 		dataModel &&
 			// eslint-disable-next-line array-callback-return
-			dataModel.graph.map(node => {
+			dataModel.map((node) => {
 				if (node.vertex) {
 					vertices[node.id] = graph.insertVertex(
 						parent,
@@ -82,3 +81,47 @@ export const renderJSON = (dataModel, graph) => {
 		graph.getModel().endUpdate();
 	}
 };
+
+/**
+ * const iter = (data, gr) => {
+		let vertices = {};
+		const parent = gr.getDefaultParent();
+		gr.getModel().beginUpdate(); // Adds cells to the model in a single step
+		try {
+			dataModel &&
+				// eslint-disable-next-line array-callback-return
+				dataModel.map((node) => {
+					if (node.vertex) {
+						vertices[node.id] = gr.insertVertex(
+							parent,
+							null,
+							node.value,
+							node.geometry.x,
+							node.geometry.y,
+							node.geometry.width,
+							node.geometry.height,
+							node.style,
+						);
+					} else if (node.edge) {
+						gr.insertEdge(
+							parent,
+							null,
+							null,
+							vertices[node.source],
+							vertices[node.target],
+							node.style,
+						);
+					} else if (
+						node.hasOwnProperty('children') &&
+						node.children.length > 0
+					) {
+						iter(node.children, gr);
+					}
+				});
+		} finally {
+			gr.getModel().endUpdate();
+		}
+	};
+
+	return iter(dataModel, graph);
+ */
