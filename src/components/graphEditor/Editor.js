@@ -12,6 +12,9 @@ const Editor = () => (
 		<Link to={'/'} style={{ position: 'absolute', top: '3px', left: '5px' }}>
 			<Button
 				variant="warning"
+				onClick={() =>
+					(document.getElementById('close-btn').style.visivility = 'visible')
+				}
 				style={{ fontSize: '14px', padding: '3px 6px' }}
 			>
 				Меню

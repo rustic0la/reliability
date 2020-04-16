@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-import Calculator from './components/math/Calc';
+import Calculator from './components/calculations/Calc';
 import Editor from './components/graphEditor/Editor';
 import Menu from './components/Menu';
 import './App.css';

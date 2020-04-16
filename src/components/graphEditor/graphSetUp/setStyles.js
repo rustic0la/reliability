@@ -5,11 +5,15 @@ import {
 	mxKeyHandler,
 	mxGraphHandler,
 	mxEdgeHandler,
+	mxUtils,
+	mxPoint,
+	mxConnectionHandler,
+	mxEvent,
 } from 'mxgraph-js';
 
-import inp from '../../assets/images/inp.png';
-import outp from '../../assets/images/outp.png';
-import loaded from '../../assets/images/loaded.png';
+import inp from '../../../assets/images/inp.png';
+import outp from '../../../assets/images/outp.png';
+import loaded from '../../../assets/images/loaded.png';
 
 export const setGraphStyle = (graph, undoManager) => {
 	graph.setConnectable(true);
@@ -27,27 +31,28 @@ export const setGraphStyle = (graph, undoManager) => {
 	graph.setDropEnabled(true);
 
 	const keyHandler = new mxKeyHandler(graph);
-	keyHandler.bindKey(46, function(evt) {
+	keyHandler.bindKey(46, (evt) => {
 		graph.removeCells();
 	});
 
-	keyHandler.bindControlKey(65, function(evt) {
+	keyHandler.bindControlKey(65, (evt) => {
 		graph.selectAll();
 	});
 
-	keyHandler.bindControlKey(90, function(evt) {
+	keyHandler.bindControlKey(90, (evt) => {
 		undoManager.undo();
 	});
 
-	keyHandler.bindControlKey(89, function(evt) {
+	keyHandler.bindControlKey(89, (evt) => {
 		undoManager.redo();
 	});
 
 	mxGraphHandler.prototype.guidesEnabled = true;
 };
 
-export const setDefaultCellsStyle = graph => {
-	//////////////////////////// EDGES STYLE
+export const setDefaultCellsStyle = (graph) => {
+	/////////////////////////// EDGES STYLE
+
 	const edgeStyle = {};
 	edgeStyle[mxConstants.STYLE_STROKECOLOR] = '#000';
 	edgeStyle[mxConstants.STYLE_STROKEWIDTH] = '2';
@@ -58,6 +63,20 @@ export const setDefaultCellsStyle = graph => {
 	edgeStyle[mxConstants.VALID_COLOR] = '#000';
 	graph.getStylesheet().putDefaultEdgeStyle(edgeStyle);
 
+	graph.connectionHandler.addListener(mxEvent.CONNECT, (sender, evt) => {
+		const edge = evt.getProperty('cell');
+		if (edge.target.style === 'mOfn') {
+			//length: 5
+			//name: "EntityRelation"
+			var newStyle = graph.stylesheet.getCellStyle(
+				'edgeStyle="";endArrow=openThin;',
+			);
+			var array = [];
+			for (var prop in newStyle) array.push(prop + '=' + newStyle[prop]);
+			edge.style = array.join(';');
+		}
+	});
+
 	//////////////////////////// VERTEX STYLES
 	const defaultStyle = {};
 	defaultStyle[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
@@ -67,14 +86,14 @@ export const setDefaultCellsStyle = graph => {
 	defaultStyle[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
 	defaultStyle[mxConstants.STYLE_FILLCOLOR] = '#FFF';
 	defaultStyle[mxConstants.STYLE_STROKECOLOR] = '#000';
-	defaultStyle[mxConstants.STYLE_STROKEWIDTH] = '2';
+	defaultStyle[mxConstants.STYLE_STROKEWIDTH] = '1.5';
 	defaultStyle[mxConstants.HANDLE_FILLCOLOR] = '#80c6ee';
 	defaultStyle[mxConstants.STYLE_IMAGE_WIDTH] = '48';
 	defaultStyle[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
 	graph.getStylesheet().putDefaultVertexStyle(defaultStyle);
 };
 
-export const setVertexStyles = graph => {
+export const setVertexStyles = (graph) => {
 	const rectangleStyle = {};
 	rectangleStyle[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
 	rectangleStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;

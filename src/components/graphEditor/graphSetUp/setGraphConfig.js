@@ -10,27 +10,28 @@ import {
 	mxConstants,
 	mxUndoManager,
 } from 'mxgraph-js';
-import executeLayout from './layout';
-import createPopupMenu from './createPopupMenu';
+import executeLayout from '../utils/layout';
+import createPopupMenu from '../PopupMenu';
 import addVertex from './addVertex';
 import addToolbarButton from './addToolbar';
-import undo from '../../assets/images/undo.png';
-import redo from '../../assets/images/redo.png';
-import zoom_in from '../../assets/images/zoomin.png';
-import zoom_out from '../../assets/images/zoomout.png';
-import del from '../../assets/images/delete.png';
-import actual from '../../assets/images/actual.png';
-import rectangle from '../../assets/images/rectangle.png';
-import output from '../../assets/images/output.png';
-import mOfn from '../../assets/images/mofn.png';
-import input from '../../assets/images/input.png';
-import loaded from '../../assets/images/loaded.png';
-import joint from '../../assets/images/joint.png';
-import save from '../../assets/images/save.png';
+import undo from '../../../assets/images/undo.png';
+import redo from '../../../assets/images/redo.png';
+import zoom_in from '../../../assets/images/zoomin.png';
+import zoom_out from '../../../assets/images/zoomout.png';
+import del from '../../../assets/images/delete.png';
+import actual from '../../../assets/images/actual.png';
+import rectangle from '../../../assets/images/rectangle.png';
+import output from '../../../assets/images/output.png';
+import mOfn from '../../../assets/images/mofn.png';
+import input from '../../../assets/images/input.png';
+import loaded from '../../../assets/images/loaded.png';
+import joint from '../../../assets/images/joint.png';
+import save from '../../../assets/images/save.png';
+import { getJsonModel } from '../utils/jsonCodec';
 
-const setBaseConfig = (graph, tbContainer, sidebar, layout) => {
+const setGraphConfig = (graph, tbContainer, sidebar, layout) => {
 	const undoManager = new mxUndoManager();
-	const listener = function (sender, evt) {
+	const listener = (sender, evt) => {
 		undoManager.undoableEditHappened(evt.getProperty('edit'));
 	};
 	graph.getModel().addListener(mxEvent.UNDO, listener);
@@ -49,16 +50,16 @@ const setBaseConfig = (graph, tbContainer, sidebar, layout) => {
 	setDefaultCellsStyle(graph);
 	setVertexStyles(graph);
 
-	addVertex(graph, sidebar, rectangle, 70, 42, 'rectangle', 'rectangle');
+	addVertex(graph, sidebar, rectangle, 55, 40, 'rectangle', 'rectangle');
 	addVertex(graph, sidebar, joint, 10, 10, 'joint', 'joint');
-	addVertex(graph, sidebar, mOfn, 45, 45, 'mOfn', 'mOfn');
-	addVertex(graph, sidebar, input, 35, 35, 'input');
-	addVertex(graph, sidebar, output, 35, 35, 'output');
-	addVertex(graph, sidebar, loaded, 70, 56, 'loaded', 'loaded');
+	addVertex(graph, sidebar, mOfn, 35, 35, 'mOfn', 'mOfn');
+	addVertex(graph, sidebar, input, 30, 30, 'input');
+	addVertex(graph, sidebar, output, 30, 30, 'output');
+	addVertex(graph, sidebar, loaded, 55, 42, 'loaded', 'loaded');
 
 	mxConstants.ENTITY_SEGMENT = 20;
 
-	graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+	graph.popupMenuHandler.factoryMethod = (menu, cell, evt) => {
 		if (cell && cell.style === 'rectangle') {
 			return createPopupMenu(graph, menu, cell, evt);
 		}
@@ -82,9 +83,9 @@ const setBaseConfig = (graph, tbContainer, sidebar, layout) => {
 		executeLayout(graph, layout);
 	};
 
-	graph.connectionHandler.addListener(mxEvent.CONNECT, function () {
+	graph.connectionHandler.addListener(mxEvent.CONNECT, () => {
 		executeLayout(graph, layout);
 	});
 };
 
-export default setBaseConfig;
+export default setGraphConfig;

@@ -31,7 +31,6 @@ const addSidebarIcon = (
 			const vertex = graph.getModel().cloneCell(prototype);
 			vertex.geometry.x = x;
 			vertex.geometry.y = y;
-			vertex.setAttribute('objectID', 1);
 			graph.addCell(vertex);
 			graph.setSelectionCell(vertex);
 		}

@@ -9,19 +9,11 @@ import {
 } from 'mxgraph-js';
 
 import './style.css';
-
-import {
-	renderJSON,
-	getJsonModel,
-	stringifyWithoutCircular,
-} from './jsonCodec';
-import './style.css';
-import executeLayout from './layout';
-import setBaseConfig from './setBaseConfig';
+import setGraphConfig from './graphSetUp/setGraphConfig';
 
 //TODO folding = container
 // TODO style for k_of_n edges
-
+// TODO validate input values
 //TODO list of components ADD CUSTOMS
 
 const Graph = () => {
@@ -57,20 +49,11 @@ const Graph = () => {
 
 		const layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
 
-		setBaseConfig(graph, tbContainer, sidebar, layout);
+		setGraphConfig(graph, tbContainer, sidebar, layout);
 
 		new mxOutline(graph, outlineContainer);
 		new mxRubberband(graph);
-
-		/*
-		if (localStorage.getItem('json') !== '') {
-			renderJSON(JSON.parse(localStorage.getItem('json')), graph);
-			executeLayout(graph, layout);
-		}
-		*/
 	};
-
-	// TODO validate input values
 
 	return <div id="graphContainer" />;
 };

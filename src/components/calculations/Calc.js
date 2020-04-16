@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { calculate } from './compute';
+import { compute } from './compute';
 
 const Calculator = () => {
 	const [params, setParams] = useState({
@@ -9,7 +9,7 @@ const Calculator = () => {
 		techService: 'обслуживаемые',
 		applicationMode: 'ндп',
 	});
-	const [output, setOutput] = useState('');
+	const [output, setOutput] = useState(compute());
 	const [show, setShow] = useState(false);
 
 	const handleClose = () => setShow(false);
@@ -113,6 +113,8 @@ const Calculator = () => {
 			{ value: 'общее', text: 'Общее' },
 		],
 	};
+
+	console.log('OUTPUT', output);
 
 	return (
 		<>

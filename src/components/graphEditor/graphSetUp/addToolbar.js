@@ -1,5 +1,5 @@
 import { mxEvent, mxUtils } from 'mxgraph-js';
-import { getJsonModel, stringifyWithoutCircular } from './jsonCodec';
+import { getJsonModel, stringifyWithoutCircular } from '../utils/jsonCodec';
 
 const saveJson = (graph) => {
 	const jsonNodes = getJsonModel(graph);
@@ -27,7 +27,7 @@ const addToolbarButton = (
 		img.style.marginRight = '2px';
 		button.appendChild(img);
 	}
-	mxEvent.addListener(button, 'click', function () {
+	mxEvent.addListener(button, 'click', () => {
 		switch (action) {
 			case 'delete':
 				graph.removeCells();

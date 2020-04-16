@@ -1,17 +1,16 @@
 import { mxEvent } from 'mxgraph-js';
-import showModalWindow from './showModal';
-import { getJsonModel, stringifyWithoutCircular } from './jsonCodec';
+import showModalWindow from './childCellModal';
 
 const createPopupMenu = (graph, menu, cell, evt) => {
 	if (cell) {
 		if (cell.edge === true) {
 			graph.setCellsEditable(true);
-			menu.addItem('Delete connection', null, function () {
+			menu.addItem('Delete connection', null, () => {
 				graph.removeCells([cell]);
 				mxEvent.consume(evt);
 			});
 		} else {
-			menu.addItem('Edit child node', null, function () {
+			menu.addItem('Edit child node', null, () => {
 				if (
 					graph.isEnabled() &&
 					!mxEvent.isConsumed(evt) &&
@@ -36,7 +35,7 @@ const createPopupMenu = (graph, menu, cell, evt) => {
 					}
 				}
 			});
-			menu.addItem('Delete child node', null, function () {
+			menu.addItem('Delete child node', null, () => {
 				graph.removeCells([cell]);
 				mxEvent.consume(evt);
 			});

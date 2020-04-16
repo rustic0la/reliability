@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
-import Calculator from '../math/Calc';
+import Calculator from '../calculations/Calc';
 
 const ModalWin = () => {
 	const [show, setShow] = useState(false);
 
 	const handleClose = () => setShow(false);
-	const handleShow = () => {
-		setShow(true);
-	};
+	const handleShow = () => setShow(true);
 
 	return (
 		<>

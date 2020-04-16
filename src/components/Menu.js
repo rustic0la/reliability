@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
-function Menu() {
+const Menu = () => {
 	const handleClick = () => {
 		localStorage.clear();
+		document.getElementById('close-btn').style.visibility = 'hidden';
 	};
 
 	return (
@@ -27,6 +28,6 @@ function Menu() {
 			</main>
 		</div>
 	);
-}
+};
 
 export default Menu;
