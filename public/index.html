@@ -6,7 +6,7 @@
 	</head>
 	<body>
 		<div id="root"></div>
-		<button id="close-btn">Exit</button>
+		<button id="close-btn">Выход</button>
 		<script type="text/javascript">
 			mxBasePath = 'https://jgraph.github.io/mxgraph/javascript/src/';
 		</script>
@@ -18,7 +18,7 @@
 			exitBtn.style.fontSize = '14px';
 			exitBtn.style.padding = '6px 10px';
 			exitBtn.style.margin = '10px 120px';
-			exitBtn.style.width = '50%';
+			exitBtn.style.width = '30%';
 
 			exitBtn.addEventListener('click', _ => {
 				ipcRenderer.send('closed');

@@ -1,16 +1,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-import Calculator from './components/calculations/Calc';
-import Editor from './components/graphEditor/Editor';
-import Menu from './components/Menu';
+import ConditionsFormContent from './components/ConditionsFormContent';
+import Editor from './components/Editor';
+import StartPage from './components/StartPage';
 import './App.css';
 
 const App = () => (
 	<Router>
 		<Switch>
-			<Route path="/" exact component={Menu} />
-			<Route path="/calculator" exact component={Calculator} />
+			<Route path="/" exact component={StartPage} />
+			<Route path="/calculator" exact component={ConditionsFormContent} />
 			<Route path="/mxgraph" exact component={Editor} />
 			<Route path="/results" />
 		</Switch>

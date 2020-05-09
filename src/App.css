@@ -1,6 +1,11 @@
 .App {
-	font-family: 'Helvetica', 'Arial', sans-serif;
+	font-family: "Gill Sans", sans-serif;
 	margin: 0;
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
 }
 
 .App-header {

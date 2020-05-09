@@ -22,7 +22,7 @@
 	padding-left: 8px;
 }
 
-.joint {
+.node {
 	width: 30px;
 	height: 30px;
 	object-fit: scale-down;
@@ -56,13 +56,13 @@ div.outlineContainer {
 div.sbContainer {
 	position: absolute;
 	overflow: hidden;
-	top: 36px;
+	top: 44px;
 	left: 0px;
 	bottom: 0px;
-	width: 56px;
+	width: 62px;
 	padding-top: 10px;
-	padding-left: 4px;
-	background: rgb(93, 131, 180);
+	padding-left: 14px;
+	background:  linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 15%, rgba(0,212,255,1) 100%);
 }
 
 div.tbContainer {
@@ -73,19 +73,19 @@ div.tbContainer {
 	left: 0px;
 	font-size: 12px;
 	right: 0px;
-	padding: 6px 66px;
-	background: rgb(57, 81, 109);
+	padding: 8px 85px;
+	background:  linear-gradient(270deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 15%, rgba(0,212,255,1) 100%);
 }
 
 .container {
 	background: url('../../assets/images/grid.png');
 	position: absolute;
 	overflow: hidden;
-	top: 36px;
-	left: 56px;
+	top: 42px;
+	left: 63px;
 	bottom: 0px;
 	right: 0px;
-	max-width: 100%;
+	max-width: calc(100% - 72px);
 	padding: 0px;
 	margin: 0px;
 	margin: 2px 6px;

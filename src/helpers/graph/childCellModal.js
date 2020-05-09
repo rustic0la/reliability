@@ -7,14 +7,12 @@ import {
 	mxConstants,
 } from 'mxgraph-js';
 
-import setBaseConfig from './graphSetUp/setGraphConfig';
+import setBaseConfig from './setGraphConfig';
 import {
 	getJsonModel,
 	stringifyWithoutCircular,
 	renderJSON,
-} from './utils/jsonCodec';
-import { findNodeByPropAndItsValue } from '../calculations/utils';
-import executeLayout from './utils/layout';
+} from './jsonCodec';
 
 const showModalWindow = (graph, title, content, width, height, cell) => {
 	const id = cell.mxObjectId;
@@ -42,18 +40,16 @@ const showModalWindow = (graph, title, content, width, height, cell) => {
 	const sdb = new mxToolbar(sdbar);
 	const gr = new mxGraph(content);
 
-	const layout = new mxHierarchicalLayout(gr, mxConstants.DIRECTION_WEST);
-	setBaseConfig(gr, tbCont, sdb, layout);
+	setBaseConfig(gr, tbCont, sdb);
 
-	if (localStorage.getItem(`id ${id}`) !== '') {
-		renderJSON(JSON.parse(localStorage.getItem(`id ${id}`)), gr);
-		executeLayout(gr, layout);
+	if (localStorage.getItem(`${id}`) !== '') {
+		renderJSON(JSON.parse(localStorage.getItem(`${id}`)), gr);
 	}
 
 	wnd.addListener(mxEvent.DESTROY, (evt) => {
 		const currentChildren = getJsonModel(gr);
 		const jsonStr = stringifyWithoutCircular(currentChildren);
-		localStorage.setItem(`id ${id}`, jsonStr);
+		localStorage.setItem(`${id}`, jsonStr);
 
 		const parent = document.getElementById('graphContainer');
 		const tb = document.getElementById(`tbCont${id}`);
