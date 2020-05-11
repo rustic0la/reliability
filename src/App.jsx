@@ -12,7 +12,6 @@ const App = () => (
 			<Route path="/" exact component={StartPage} />
 			<Route path="/calculator" exact component={ConditionsFormContent} />
 			<Route path="/mxgraph" exact component={Editor} />
-			<Route path="/results" />
 		</Switch>
 	</Router>
 );

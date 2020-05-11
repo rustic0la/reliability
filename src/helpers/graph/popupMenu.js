@@ -1,8 +1,9 @@
+import React from "react";
 import { mxEvent } from "mxgraph-js";
-import showModalWindow from "./childCellModal";
+import childCellModal from "./childCellModal";
 
-const createPopupMenu = (graph, menu, cell, evt) => {
-  if (cell && ((cell.style === "rectangle") || cell.style === "loaded")) {
+const CreatePopupMenu = (graph, menu, cell, evt, setGraphNodes) => {
+  if (cell && (cell.style === "rectangle" || cell.style === "loaded")) {
     if (cell.style === "rectangle") {
       if (cell.edge === true) {
         graph.setCellsEditable(true);
@@ -11,7 +12,7 @@ const createPopupMenu = (graph, menu, cell, evt) => {
           mxEvent.consume(evt);
         });
       } else {
-        menu.addItem("Добавить дочерний компонент", null, () => {
+        menu.addItem("Добавить/изменить дочерний компонент", null, () => {
           if (
             graph.isEnabled() &&
             !mxEvent.isConsumed(evt) &&
@@ -25,13 +26,13 @@ const createPopupMenu = (graph, menu, cell, evt) => {
               modalCont.id = "modal";
               modalCont.className = "modalCont";
 
-              showModalWindow(
+              childCellModal(
                 graph,
                 `Дочерние компоненты блока ${cell.mxObjectId}`,
                 modalCont,
                 400,
                 300,
-                cell
+                cell,
               );
             }
           }
@@ -43,6 +44,8 @@ const createPopupMenu = (graph, menu, cell, evt) => {
       }
     }
   }
+
+  return <></>;
 };
 
-export default createPopupMenu;
+export default CreatePopupMenu;

@@ -14,6 +14,7 @@ import {
   mxConnectionHandler,
   mxUtils,
   mxConstraintHandler,
+  mxRubberband,
 } from "mxgraph-js";
 
 import createPopupMenu from "./popupMenu";
@@ -35,7 +36,7 @@ import toggle from "../../assets/images/toggle.png";
 import vertical from "../../assets/images/vertical.png";
 import horizontal from "../../assets/images/horizontal.png";
 
-const setGraphConfig = (graph, tbContainer, sidebar) => {
+const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
   const undoManager = new mxUndoManager(); // реализация функций undo, redo
   const listener = (sender, evt) => {
     undoManager.undoableEditHappened(evt.getProperty("edit"));
@@ -60,9 +61,11 @@ const setGraphConfig = (graph, tbContainer, sidebar) => {
     return cell.mxObjectId;
   };
 
-  graph.popupMenuHandler.factoryMethod = (menu, cell, evt) => {
-    return createPopupMenu(graph, menu, cell, evt);
+  graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+    return createPopupMenu(graph, menu, cell, evt, setGraphNodes);
   };
+
+  new mxRubberband(graph);
 
   mxEdgeHandler.prototype.parentHighlightEnabled = true;
 

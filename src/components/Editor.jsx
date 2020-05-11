@@ -7,11 +7,11 @@ import GraphContainer from "./GraphContainer";
 import ConditionsForm from "./ConditionsForm";
 
 const Editor = () => {
-  const [graphStructure, setGraphStructure] = useState('');
+  const [graphNodes, setGraphNodes] = useState([]);
   
   return (
     <>
-      <GraphContainer setGraphStructure={setGraphStructure} />
+      <GraphContainer setGraphNodes={setGraphNodes} />
       <Link to={"/"} style={{ position: "absolute", top: "3px", left: "5px" }}>
         <Button
           onClick={() => {
@@ -29,7 +29,7 @@ const Editor = () => {
           Меню
         </Button>
       </Link>
-      <ConditionsForm graphStructure={graphStructure} />
+      <ConditionsForm graphNodes={graphNodes} />
     </>
   );
 };

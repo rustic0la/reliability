@@ -53,7 +53,6 @@ export const setDefaultCellsStyle = (graph) => {
 
 export const setVertexStyles = (graph) => {
   const rectangleStyle = {};
-  rectangleStyle[mxConstants.STYLE_FILLCOLOR] = "#ffffff";
   rectangleStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
   graph.getStylesheet().putCellStyle("rectangle", rectangleStyle);
 

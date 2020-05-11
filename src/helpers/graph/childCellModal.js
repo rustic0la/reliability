@@ -3,8 +3,7 @@ import {
 	mxWindow,
 	mxGraph,
 	mxToolbar,
-	mxHierarchicalLayout,
-	mxConstants,
+	mxCodec,
 } from 'mxgraph-js';
 
 import setBaseConfig from './setGraphConfig';
@@ -14,9 +13,9 @@ import {
 	renderJSON,
 } from './jsonCodec';
 
-const showModalWindow = (graph, title, content, width, height, cell) => {
+const childCellModal = (graph, title, content, width, height, cell) => {
+	
 	const id = cell.mxObjectId;
-	cell.setValue('*');
 
 	var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
 	var y = Math.max(
@@ -38,18 +37,31 @@ const showModalWindow = (graph, title, content, width, height, cell) => {
 	document.getElementById('graphContainer').appendChild(sdbar);
 
 	const sdb = new mxToolbar(sdbar);
-	const gr = new mxGraph(content);
+	const gr = new mxGraph(content, );
 
 	setBaseConfig(gr, tbCont, sdb);
-
+	if (cell.child && cell.child.length > 0) {
+		gr.addCells(cell.child, cell)
+	}
+	/*
 	if (localStorage.getItem(`${id}`) !== '') {
 		renderJSON(JSON.parse(localStorage.getItem(`${id}`)), gr);
-	}
+	}*/
 
 	wnd.addListener(mxEvent.DESTROY, (evt) => {
 		const currentChildren = getJsonModel(gr);
-		const jsonStr = stringifyWithoutCircular(currentChildren);
-		localStorage.setItem(`${id}`, jsonStr);
+		if (currentChildren.length > 0) {
+			cell.setValue('*');
+			cell.child = currentChildren;
+            console.log("cell", cell)
+			
+			const jsonStr = stringifyWithoutCircular(currentChildren);
+			localStorage.setItem(`${id}`, jsonStr);
+		}
+
+		const enc = new mxCodec();
+		const node = enc.encode(gr.getModel());
+        console.log("node", node)
 
 		const parent = document.getElementById('graphContainer');
 		const tb = document.getElementById(`tbCont${id}`);
@@ -64,4 +76,4 @@ const showModalWindow = (graph, title, content, width, height, cell) => {
 	wnd.setVisible(true);
 };
 
-export default showModalWindow;
+export default childCellModal;

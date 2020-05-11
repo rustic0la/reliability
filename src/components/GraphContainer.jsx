@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   mxGraph,
   mxOutline,
   mxToolbar,
-  mxRubberband,
   mxEvent,
   mxUtils,
   mxGraphModel,
@@ -19,7 +18,7 @@ import { getJsonModel, stringifyWithoutCircular } from "../helpers/graph/jsonCod
 // todo align vertically and horizontally
 // todo show children sign
 
-const GraphContainer = ({ setGraphStructure }) => {
+const GraphContainer = ({ setGraphNodes }) => {
 
   useEffect(() => {
     loadGraph();
@@ -43,13 +42,13 @@ const GraphContainer = ({ setGraphStructure }) => {
     const graph = new mxGraph(container);
     const sidebar = new mxToolbar(sbContainer);
 
-    setGraphConfig(graph, tbContainer, sidebar);
+    setGraphConfig(graph, tbContainer, sidebar, setGraphNodes);
 
     new mxOutline(graph, outlineContainer);
-    new mxRubberband(graph);
 
     ////////////////!
 
+    /*
     mxEvent.disableContextMenu(container);
 
     // Public helper method for shared clipboard.
@@ -113,6 +112,7 @@ const GraphContainer = ({ setGraphStructure }) => {
       }
     });
 
+    
     // Restores focus on graph container and removes text input from DOM
     mxEvent.addListener(document, "keyup", (evt) => {
       console.log("Graph -> keyup", evt);
@@ -324,7 +324,7 @@ const GraphContainer = ({ setGraphStructure }) => {
 
       textInput.select();
     });
-/*
+
     const parent = graph.getDefaultParent();
 
     graph.getModel().beginUpdate();
@@ -339,8 +339,8 @@ const GraphContainer = ({ setGraphStructure }) => {
 
     graph.model.addListener(mxEvent.CHANGE, () => {
       const jsonNodes = getJsonModel(graph);
-      const jsonStr = stringifyWithoutCircular(jsonNodes);
-      setGraphStructure(jsonStr);
+      // const jsonStr = stringifyWithoutCircular(jsonNodes);
+      setGraphNodes(jsonNodes);
     });
   };
 

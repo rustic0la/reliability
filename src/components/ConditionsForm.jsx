@@ -1,41 +1,85 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
 import ConditionsFormContent from "./ConditionsFormContent";
 
-const ModalWin = ({ graphStructure }) => {
+const EMPTY_GRAPH = "emptyGraph";
+const BLOCKS_NOT_INITIALIZED = "blocksNotInitialized";
+const VALUES_NOT_NUMERIC = "valuesNotNumeric";
+const NO_INPUT_OR_OUTPUT = "noInputOrOutput";
+const ELEMENT_WITHOUT_EDGES = "elementWithoutEdges";
+const M_OF_N = "mOfN";
+
+const ModalWin = ({ graphNodes }) => {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
+    checkValidity();
     setShow(true);
   };
 
-  let subGraphs = [];
+  const [error, setError] = useState(null);
 
-  //! FIX
-  const [isEmptyGraph, setIsEmptyGraph] = useState(null);
-  const [areBlocksNotInitialized, setAreBlocksNotInitialized] = useState(null);
-  const [areValuesNotNumeric, setAreValuesNotNumeric] = useState(null);
-
-
-/*
-  useEffect(() => {
-    graphStructureNodes = JSON.parse(localStorage.getItem("json"));
-    console.log(
-      "ValidInputChecker -> graphStructureNodes",
-      graphStructureNodes
+  const checkValidity = () => {
+    const subGraphsJSON = Object.entries(localStorage).filter((item) =>
+      item[0].includes("mxCell")
     );
-  }, [localStorage]);
+    const subGraphs = subGraphsJSON.reduce(
+      (acc, [, value]) => [...acc, JSON.parse(value)],
+      []
+    );
+    if (isEmptyGraph(graphNodes)) {
+      setError(EMPTY_GRAPH);
+      return;
+    }
 
-  const checkForBlocksNotInitialized = () => {
-    const graphVertexes = graphStructureNodes
+    if (isNoInputOrOutput(graphNodes)) {
+      setError(NO_INPUT_OR_OUTPUT);
+      return;
+    }
+
+    if (isElementWithoutEdges(graphNodes, subGraphs)) {
+      setError(ELEMENT_WITHOUT_EDGES);
+      return;
+    }
+
+    if (areBlocksNotInitialized(graphNodes, subGraphs)) {
+      setError(BLOCKS_NOT_INITIALIZED);
+      return;
+    }
+    if (areValuesNotNumeric(graphNodes, subGraphs)) {
+      setError(VALUES_NOT_NUMERIC);
+      return;
+    }
+
+    if (isIncorrectMOfN(graphNodes, subGraphs)) {
+      setError(M_OF_N);
+      return;
+    }
+
+    setError(null);
+    return;
+  };
+
+  /**
+   * @empty
+   * @no_value + children
+   * @not_numeric_value + children
+   * @input @output
+   * @element_without_edges + children
+   */
+
+  const isEmptyGraph = (graph) => graph.length === 0;
+
+  const areBlocksNotInitialized = (graph, childNodes) => {
+    const graphVertexes = graph
       .filter((cell) => ["rectangle", "mOfn", "loaded"].includes(cell.style))
       .every((cell) => cell.value);
 
     const children =
-      subGraphs.length > 0
-        ? subGraphs
+      childNodes[0].length > 0
+        ? childNodes[0]
             .filter((cell) =>
               ["rectangle", "mOfn", "loaded"].includes(cell.style)
             )
@@ -45,43 +89,60 @@ const ModalWin = ({ graphStructure }) => {
     return !graphVertexes || !children;
   };
 
-  const checkForValuesNotNumeric = () => {
-    const reNum = /^(0\.\d+)$|^1$/gm;
-    const graphVertexes = graphStructureNodes
-      .filter((cell) => ["rectangle", "loaded"].includes(cell.style))
-      .every((cell) => reNum.test(cell.value));
+  const areValuesNotNumeric = (graph, childNodes) => {
+    const reNum = /^(0\.\d+)$|^1$/;
 
-    const childrenVertexes =
-      subGraphs.length > 0
-        ? subGraphs
+    const graphVertexes = graph
+      .filter((cell) => ["rectangle", "loaded"].includes(cell.style))
+      .every((cell) => reNum.test(cell.value) || cell.value === "*");
+
+    const childVertexes =
+      childNodes[0].length > 0
+        ? childNodes[0]
             .filter((cell) => ["rectangle", "loaded"].includes(cell.style))
             .every((cell) => reNum.test(cell.value))
         : false;
 
-    const reMOfn = /^\d+\/\d+$/gm;
-    const mOfn = graphStructureNodes
+    return !graphVertexes || !childVertexes;
+  };
+
+  const isIncorrectMOfN = (graph, childNodes) => {
+    const reMOfn = /^\d+\/\d+$/;
+    const mOfn = graph
       .filter((cell) => cell.style === "mOfn")
       .every((cell) => reMOfn.test(cell.value));
 
-    const childrenMOfn =
-      subGraphs.length > 0
-        ? subGraphs
+    const childMOfn =
+      childNodes[0].length > 0
+        ? childNodes[0]
             .filter((cell) => cell.style === "mOfn")
             .every((cell) => reMOfn.test(cell.value))
         : false;
 
-    return !graphVertexes || !mOfn || !childrenVertexes || !childrenMOfn;
+    return !mOfn || !childMOfn;
   };
 
-  setIsEmptyGraph(!graphStructureNodes);
+  const isNoInputOrOutput = (graph) => {
+    return !(
+      graph.filter((cell) => cell.style === "input").length === 1 &&
+      graph.filter((cell) => cell.style === "output").length === 1
+    );
+  };
 
-  if (!isEmptyGraph) {
-    setAreBlocksNotInitialized(checkForBlocksNotInitialized());
+  const isElementWithoutEdges = (graph, childNodes) => {
+    const graphVertexes = graph
+      .filter((cell) => cell.vertex)
+      .every((cell) => cell.hasOwnProperty("edges"));
 
-    if (!areBlocksNotInitialized) {
-      setAreValuesNotNumeric(checkForValuesNotNumeric());
-    }
-  }
+    const childVertexes =
+      childNodes[0].length > 0
+        ? childNodes[0]
+            .filter((cell) => cell.vertex)
+            .filter((cell) => !cell.hasOwnProperty("edges")).length <= 1
+        : false;
+
+    return !graphVertexes || !childVertexes;
+  };
 
   const renderEmptyGraph = () => (
     <>
@@ -112,11 +173,45 @@ const ModalWin = ({ graphStructure }) => {
         <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ padding: "10px" }}>
-        Каждое значение интенсивности отказов должно относиться к типу Float
+        Каждое значение интенсивности отказов должно быть в диапазоне от 0 до 1
+        и относиться к типу Float
       </Modal.Body>
     </>
   );
-*/
+
+  const renderMOfN = () => (
+    <>
+      <Modal.Header closeButton>
+        <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ padding: "10px" }}>
+        Значения элементов типа m из n должны записываться в формате m/n
+      </Modal.Body>
+    </>
+  );
+
+  const renderNoInputOrOutput = () => (
+    <>
+      <Modal.Header closeButton>
+        <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ padding: "10px" }}>
+        Схема должна содержать входной и выходной элементы
+      </Modal.Body>
+    </>
+  );
+
+  const renderElementWithoutEdges = () => (
+    <>
+      <Modal.Header closeButton>
+        <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ padding: "10px" }}>
+        Схема не должна содержать элементы без соединения
+      </Modal.Body>
+    </>
+  );
+
   return (
     <>
       <Button
@@ -135,13 +230,13 @@ const ModalWin = ({ graphStructure }) => {
         Рассчитать
       </Button>
       <Modal show={show} onHide={handleClose}>
-        {/*isEmptyGraph ? (
-          renderEmptyGraph()
-        ) : areBlocksNotInitialized ? (
-          renderBlocksNotInitialized()
-        ) : areValuesNotNumeric ? (
-          renderValuesNotNumeric()
-        ) : (*/}
+        {error === EMPTY_GRAPH && renderEmptyGraph()}
+        {error === BLOCKS_NOT_INITIALIZED && renderBlocksNotInitialized()}
+        {error === VALUES_NOT_NUMERIC && renderValuesNotNumeric()}
+        {error === M_OF_N && renderMOfN()}
+        {error === NO_INPUT_OR_OUTPUT && renderNoInputOrOutput()}
+        {error === ELEMENT_WITHOUT_EDGES && renderElementWithoutEdges()}
+        {error === null && (
           <>
             <Modal.Header closeButton>
               <Modal.Title>Параметры эксплуатации</Modal.Title>
@@ -150,7 +245,7 @@ const ModalWin = ({ graphStructure }) => {
               <ConditionsFormContent />
             </Modal.Body>
           </>
-        
+        )}
       </Modal>
     </>
   );
