@@ -66,6 +66,7 @@ export const renderJSON = (dataModel, graph) => {
 						node.geometry.height,
 						node.style,
 					);
+					vertices[node.id].mxObjectId = node.mxObjectId;
 				} else if (node.edge) {
 					graph.insertEdge(
 						parent,

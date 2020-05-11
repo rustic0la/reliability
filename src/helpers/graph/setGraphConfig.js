@@ -33,6 +33,8 @@ import input from "../../assets/images/input.png";
 import loaded from "../../assets/images/loaded.png";
 import joint from "../../assets/images/joint.png";
 import toggle from "../../assets/images/toggle.png";
+import copy from '../../assets/images/copy.png';
+import paste from '../../assets/images/paste.png';
 import vertical from "../../assets/images/vertical.png";
 import horizontal from "../../assets/images/horizontal.png";
 
@@ -55,6 +57,7 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
   graph.setMultigraph = true;
   graph.setDropEnabled(true);
   graph.setTooltips(true);
+  graph.autoSizeCells = true;
 
   graph.getTooltip = (state) => {
     const cell = state.cell;
@@ -155,8 +158,10 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
   addToolbarButton(null, graph, tbContainer, "zoomActual", actual);
   addToolbarButton(undoManager, graph, tbContainer, "undo", undo);
   addToolbarButton(undoManager, graph, tbContainer, "redo", redo);
-  addToolbarButton(undoManager, graph, tbContainer, "vertical", vertical);
-  addToolbarButton(undoManager, graph, tbContainer, "horizontal", horizontal);
+  addToolbarButton(null, graph, tbContainer, "copy", copy);
+  addToolbarButton(null, graph, tbContainer, "paste", paste);
+  addToolbarButton(null, graph, tbContainer, "vertical", vertical);
+  addToolbarButton(null, graph, tbContainer, "horizontal", horizontal);
 
   setDefaultCellsStyle(graph); // дефолтные стили вершин и ребер
   setVertexStyles(graph); // стили блоков

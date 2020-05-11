@@ -62,31 +62,28 @@ const ModalWin = ({ graphNodes }) => {
     return;
   };
 
-  /**
-   * @empty
-   * @no_value + children
-   * @not_numeric_value + children
-   * @input @output
-   * @element_without_edges + children
-   */
-
   const isEmptyGraph = (graph) => graph.length === 0;
 
-  const areBlocksNotInitialized = (graph, childNodes) => {
+  const areBlocksNotInitialized = (graph, childLayers) => {
+  
     const graphVertexes = graph
       .filter((cell) => ["rectangle", "mOfn", "loaded"].includes(cell.style))
       .every((cell) => cell.value);
 
     const children =
-      childNodes[0].length > 0
-        ? childNodes[0]
-            .filter((cell) =>
-              ["rectangle", "mOfn", "loaded"].includes(cell.style)
-            )
-            .every((cell) => cell.value)
-        : false;
+      childLayers && childLayers.length > 0
+        ? childLayers.map((layer) =>
+            layer
+              .filter((cell) =>
+                ["rectangle", "mOfn", "loaded"].includes(cell.style)
+              )
+              .every((cell) => cell.value)
+          )
+        : true;
 
-    return !graphVertexes || !children;
+    const res = children === true ? children : children.every(layer => layer);
+
+    return !graphVertexes || !res;
   };
 
   const areValuesNotNumeric = (graph, childNodes) => {
@@ -97,29 +94,31 @@ const ModalWin = ({ graphNodes }) => {
       .every((cell) => reNum.test(cell.value) || cell.value === "*");
 
     const childVertexes =
-      childNodes[0].length > 0
+      childNodes[0] && childNodes[0].length > 0
         ? childNodes[0]
-            .filter((cell) => ["rectangle", "loaded"].includes(cell.style))
-            .every((cell) => reNum.test(cell.value))
-        : false;
+          .filter((cell) => ["rectangle", "loaded"].includes(cell.style))
+          .every((cell) => reNum.test(cell.value) || cell.value === "*")
+        : true;
 
     return !graphVertexes || !childVertexes;
   };
 
-  const isIncorrectMOfN = (graph, childNodes) => {
+  const isIncorrectMOfN = (graph, childLayers) => {
     const reMOfn = /^\d+\/\d+$/;
     const mOfn = graph
       .filter((cell) => cell.style === "mOfn")
       .every((cell) => reMOfn.test(cell.value));
 
     const childMOfn =
-      childNodes[0].length > 0
-        ? childNodes[0]
-            .filter((cell) => cell.style === "mOfn")
-            .every((cell) => reMOfn.test(cell.value))
-        : false;
+      childLayers && childLayers.length > 0
+        ? childLayers
+          .filter((cell) => cell.style === "mOfn")
+          .every((cell) => reMOfn.test(cell.value))
+        : true;
 
-    return !mOfn || !childMOfn;
+    const res = childMOfn === true ? childMOfn : childMOfn.every(layer => layer);
+
+    return !mOfn || !res;
   };
 
   const isNoInputOrOutput = (graph) => {
@@ -135,11 +134,11 @@ const ModalWin = ({ graphNodes }) => {
       .every((cell) => cell.hasOwnProperty("edges"));
 
     const childVertexes =
-      childNodes[0].length > 0
+      childNodes[0] && childNodes[0].length > 0
         ? childNodes[0]
             .filter((cell) => cell.vertex)
             .filter((cell) => !cell.hasOwnProperty("edges")).length <= 1
-        : false;
+        : true;
 
     return !graphVertexes || !childVertexes;
   };

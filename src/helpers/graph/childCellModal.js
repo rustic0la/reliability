@@ -37,37 +37,29 @@ const childCellModal = (graph, title, content, width, height, cell) => {
 	document.getElementById('graphContainer').appendChild(sdbar);
 
 	const sdb = new mxToolbar(sdbar);
-	const gr = new mxGraph(content, );
+	const gr = new mxGraph(content);
 
 	setBaseConfig(gr, tbCont, sdb);
 	if (cell.child && cell.child.length > 0) {
 		gr.addCells(cell.child, cell)
 	}
-	/*
+	
 	if (localStorage.getItem(`${id}`) !== '') {
 		renderJSON(JSON.parse(localStorage.getItem(`${id}`)), gr);
-	}*/
+	}
 
 	wnd.addListener(mxEvent.DESTROY, (evt) => {
 		const currentChildren = getJsonModel(gr);
 		if (currentChildren.length > 0) {
 			cell.setValue('*');
-			cell.child = currentChildren;
-            console.log("cell", cell)
-			
+			graph.refresh();			
 			const jsonStr = stringifyWithoutCircular(currentChildren);
 			localStorage.setItem(`${id}`, jsonStr);
 		}
 
-		const enc = new mxCodec();
-		const node = enc.encode(gr.getModel());
-        console.log("node", node)
-
 		const parent = document.getElementById('graphContainer');
-		const tb = document.getElementById(`tbCont${id}`);
-		const sb = document.getElementById(`sdbar${id}`);
-		parent.removeChild(tb);
-		parent.removeChild(sb);
+		parent.removeChild(tbCont);
+		parent.removeChild(sdbar);
 		graph.setEnabled(true);
 	});
 

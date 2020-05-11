@@ -1,4 +1,4 @@
-import { mxEvent, mxUtils } from "mxgraph-js";
+import { mxEvent, mxUtils, mxClipboard } from "mxgraph-js";
 
 const addToolbarButton = (
   undoManager,
@@ -42,27 +42,30 @@ const addToolbarButton = (
       case "redo":
         undoManager.redo();
         break;
+      case "copy":
+        const cells = graph.getSelectionCells();
+        mxClipboard.copy(graph, cells);
+        break;
+      case "paste":
+        mxClipboard.paste(graph);
+        break;
+      case "vertical":
+        const alignVerticallyCells = graph.getSelectionCells();
+        const x = alignVerticallyCells[0].geometry.x;
+        alignVerticallyCells.map(cell => cell.geometry.x = x);
+        graph.refresh();
+        break;
+      case "horizontal":
+        const alignHorizontallyCells = graph.getSelectionCells();
+        const y = alignHorizontallyCells[0].geometry.y;
+        alignHorizontallyCells.map(cell => cell.geometry.y = y);
+        graph.refresh();
+        break;
       default:
         break;
     }
   });
 
-  graph.getSelectionModel().addListener(mxEvent.CHANGE, function (sender, evt) {
-    var cells = evt.getProperty("added");
-
-    mxEvent.addListener(button, "click", () => {
-      switch (action) {
-        case "vertical":
-          console.log('vert')
-          break;
-        case "horizontal":
-			console.log('hor')
-		  break;
-		default:
-        	break;
-      }
-    });
-  });
   mxUtils.write(button, label);
   toolbar.appendChild(button);
 };
