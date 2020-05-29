@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
 import GraphContainer from "./GraphContainer";
-import ConditionsForm from "./ConditionsForm";
+import SchemeValidator from "./SchemeValidator";
 
 const Editor = () => {
   const [graphNodes, setGraphNodes] = useState([]);
@@ -29,7 +29,7 @@ const Editor = () => {
           Меню
         </Button>
       </Link>
-      <ConditionsForm graphNodes={graphNodes} />
+      <SchemeValidator graphNodes={graphNodes} />
     </>
   );
 };

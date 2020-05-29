@@ -1,12 +1,8 @@
-import {
-  setVertexStyles,
-  setDefaultCellsStyle,
-} from "./setStyles";
+import { setVertexStyles, setDefaultCellsStyle } from "./setStyles";
 
 import {
   mxEvent,
   mxUndoManager,
-  mxKeyHandler,
   mxGraphHandler,
   mxEdgeHandler,
   mxConnectionConstraint,
@@ -31,21 +27,21 @@ import output from "../../assets/images/output.png";
 import mOfn from "../../assets/images/mofn.png";
 import input from "../../assets/images/input.png";
 import loaded from "../../assets/images/loaded.png";
-import joint from "../../assets/images/joint.png";
-import toggle from "../../assets/images/toggle.png";
-import copy from '../../assets/images/copy.png';
-import paste from '../../assets/images/paste.png';
+import switcher from "../../assets/images/switcher.png";
+import copy from "../../assets/images/copy.png";
+import paste from "../../assets/images/paste.png";
 import vertical from "../../assets/images/vertical.png";
 import horizontal from "../../assets/images/horizontal.png";
 
 const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
-  const undoManager = new mxUndoManager(); // реализация функций undo, redo
+  const undoManager = new mxUndoManager();
   const listener = (sender, evt) => {
     undoManager.undoableEditHappened(evt.getProperty("edit"));
   };
   graph.getModel().addListener(mxEvent.UNDO, listener);
   graph.getView().addListener(mxEvent.UNDO, listener);
 
+  /** свойства графа */
   graph.setConnectable(true);
   graph.setCellsEditable(true);
   graph.setEnabled(true);
@@ -53,11 +49,10 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
   graph.centerZoom = true;
   graph.setAllowDanglingEdges(false);
   graph.gridEnabled = true;
-  graph.gridSize = 30;
+  graph.gridSize = 10;
   graph.setMultigraph = true;
   graph.setDropEnabled(true);
   graph.setTooltips(true);
-  graph.autoSizeCells = true;
 
   graph.getTooltip = (state) => {
     const cell = state.cell;
@@ -68,10 +63,12 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
     return createPopupMenu(graph, menu, cell, evt, setGraphNodes);
   };
 
+  /** выделение */
   new mxRubberband(graph);
 
   mxEdgeHandler.prototype.parentHighlightEnabled = true;
 
+  /** модификация способа соединения элементов */
   mxConstraintHandler.prototype.intersects = function (
     icon,
     point,
@@ -83,11 +80,11 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
 
   const mxConnectionHandlerUpdateEdgeState =
     mxConnectionHandler.prototype.updateEdgeState;
-  mxConnectionHandler.prototype.updateEdgeState =  function (pt, constraint) {
+  mxConnectionHandler.prototype.updateEdgeState = function (pt, constraint) {
     if (pt != null && this.previous != null) {
       const constraints = this.graph.getAllConnectionConstraints(this.previous);
-      const nearestConstraint = null;
-      const dist = null;
+      let nearestConstraint = null;
+      let dist = null;
 
       for (let i = 0; i < constraints.length; i++) {
         const cp = this.graph.getConnectionPoint(this.previous, constraints[i]);
@@ -128,26 +125,8 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
         new mxConnectionConstraint(new mxPoint(1, 0.5), true),
         new mxConnectionConstraint(new mxPoint(0.5, 1), true),
       ];
-	}
+    }
   };
-  
-  // обработка нажатий на клавиатуре
-  const keyHandler = new mxKeyHandler(graph);
-  keyHandler.bindKey(46, (evt) => {
-    graph.removeCells();
-  });
-
-  keyHandler.bindControlKey(65, (evt) => {
-    graph.selectAll();
-  });
-
-  keyHandler.bindControlKey(90, (evt) => {
-    undoManager.undo();
-  });
-
-  keyHandler.bindControlKey(89, (evt) => {
-    undoManager.redo();
-  });
 
   mxGraphHandler.prototype.guidesEnabled = true;
 
@@ -168,12 +147,11 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
 
   // добавление блоков на сайдбар
   addVertex(graph, sidebar, rectangle, 55, 40, "rectangle", "rectangle");
-  addVertex(graph, sidebar, joint, 15, 15, "node", "node");
-  addVertex(graph, sidebar, toggle, 40, 40, "toggle");
-  addVertex(graph, sidebar, mOfn, 35, 35, "mOfn", "mOfn");
-  addVertex(graph, sidebar, input, 30, 30, "input");
-  addVertex(graph, sidebar, output, 30, 30, "output");
   addVertex(graph, sidebar, loaded, 55, 42, "loaded", "loaded");
+  addVertex(graph, sidebar, switcher, 40, 40, "switcher", "switcher");
+  addVertex(graph, sidebar, input, 30, 30, "input", "input");
+  addVertex(graph, sidebar, output, 30, 30, "output", "input");
+  addVertex(graph, sidebar, mOfn, 35, 35, "mOfn", "mOfn");
 };
 
 export default setGraphConfig;

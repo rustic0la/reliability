@@ -1,4 +1,5 @@
 import { mxEvent, mxUtils, mxClipboard } from "mxgraph-js";
+import _ from 'lodash';
 
 const addToolbarButton = (
   undoManager,
@@ -26,6 +27,7 @@ const addToolbarButton = (
     switch (action) {
       case "delete":
         graph.removeCells();
+        graph.refresh();
         break;
       case "zoomIn":
         graph.zoomIn();
@@ -38,9 +40,11 @@ const addToolbarButton = (
         break;
       case "undo":
         undoManager.undo();
+        graph.refresh();
         break;
       case "redo":
         undoManager.redo();
+        graph.refresh();
         break;
       case "copy":
         const cells = graph.getSelectionCells();
@@ -51,14 +55,18 @@ const addToolbarButton = (
         break;
       case "vertical":
         const alignVerticallyCells = graph.getSelectionCells();
+        const maxWidth = _.max(alignVerticallyCells.map(c => c.geometry.width))
         const x = alignVerticallyCells[0].geometry.x;
-        alignVerticallyCells.map(cell => cell.geometry.x = x);
+        const centerX = x + maxWidth / 2;
+        alignVerticallyCells.map(cell => cell.geometry.x = centerX - cell.geometry.width / 2);
         graph.refresh();
         break;
       case "horizontal":
         const alignHorizontallyCells = graph.getSelectionCells();
+        const maxHeight = _.max(alignHorizontallyCells.map(c => c.geometry.height))
         const y = alignHorizontallyCells[0].geometry.y;
-        alignHorizontallyCells.map(cell => cell.geometry.y = y);
+        const centerY = y + maxHeight / 2;
+        alignHorizontallyCells.map(cell => cell.geometry.y = centerY - cell.geometry.height / 2);
         graph.refresh();
         break;
       default:

@@ -1,120 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Button, Modal, InputGroup, FormControl } from "react-bootstrap";
 import { compute } from "../helpers/calc/helpers";
+import Output from "./Output";
 
-const ConditionsFormContent = () => {
-  const [params, setParams] = useState({
-    purpose: "конкретное",
-    recovery: "восст",
-    techService: "обслуживаемые",
-    applicationMode: "ндп",
-  });
+const LOADED = "loaded";
+const UNLOADED = "unloaded";
+const LIGHTWEIGHT = "lightweight";
+
+const ConditionsFormContent = ({ scheme, isReserved, isSwitcher }) => {
+  const [recoverable, setRecoverable] = useState(false);
+  const [failureRate, setFailureRate] = useState(null);
+  const [showFailureRate] = useState(true);
+
+  const [tve, setTve] = useState(null);
+  const [reservedMode, setReservedMode] = useState(LOADED);
+  const [switcherFailureRate, setSwitcherFailureRate] = useState(null);
+
+  const [exploitationTime, setExploitationTime] = useState(0);
   const [output, setOutput] = useState(null);
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
-    setOutput("");
+    setOutput(null);
     setShow(false);
   };
-  const handleShow = () => {
+
+  const handleToggleRecoverable = () => {
+    setRecoverable(!recoverable);
+  };
+
+  const handleFailureRateChange = (e) => {
+    setFailureRate(e.target.value);
+  };
+
+  const handleTveChange = (e) => {
+    setTve(e.target.value);
+  };
+
+  const handleSwitcherFailureRateChange = (e) => {
+    setSwitcherFailureRate(e.target.value);
+  };
+
+  const handleChangeReserve = (e) => {
+    setReservedMode(e.target.value);
+  };
+
+  const handleExploitationTimeChange = (e) => {
+    setExploitationTime(e.target.value);
+  };
+
+  const handleCalculateClick = useCallback(() => {
     setShow(true);
-    handleCalculateClick();
-  };
-
-  const changeInputDropdown = async (id) => {
-    const e = document.getElementById(id);
-    const val = e.value;
-    await setParams({ ...params, [id]: val });
-  };
-
-  const handleCalculateClick = async () => {
-    const { purpose, recovery, techService, applicationMode } = params;
-
-    let param;
-    let res = [];
-    switch (recovery) {
-      case "восст":
-        if (techService === "обслуживаемые") {
-          switch (purpose) {
-            case "конкретное":
-              param =
-                applicationMode === "ндп"
-                  ? "Кг, Кти, То, Тв,"
-                  : applicationMode === "мцп"
-                  ? "Kг*Р(tбр), Тв,"
-                  : "Ктиож, Р(tбр), Твож,";
-              await setOutput(`${output} ${param}`);
-              break;
-            default:
-              param =
-                applicationMode === "ндп" || applicationMode === "мцп"
-                  ? "Кти, То, Тв"
-                  : "";
-              await setOutput(`${output} ${param}`);
-              break;
-          }
-        } else {
-          switch (purpose) {
-            case "конкретное":
-              param =
-                applicationMode === "ндп"
-                  ? "Кг, То, Тв,"
-                  : applicationMode === "мцп"
-                  ? "Kг*Р(tбр), Тв,"
-                  : "Кгож, Р(tбр), Твож,";
-              await setOutput(`${output} ${param}`);
-              break;
-            default:
-              param =
-                applicationMode === "ндп" || applicationMode === "мцп"
-                  ? "Кг, То, Тв,"
-                  : "";
-              await setOutput(`${output} ${param}`);
-              break;
-          }
-        }
-        break;
-      default:
-        switch (purpose) {
-          case "конкретное":
-            param =
-              applicationMode === "ндп"
-                ? "Р(tбр) или Тср"
-                : applicationMode === "мцп"
-                ? "Р0(вкл), Тср"
-                : "Р(tож), Р(tбр)";
-
-            await setOutput(`${output} ${param}`);
-            break;
-          default:
-            param =
-              applicationMode === "ндп" || applicationMode === "мцп"
-                ? "Ту, Тср, Р0(вкл)"
-                : "";
-            await setOutput(`${output} ${param}`);
-            break;
-        }
-    }
-    setOutput(compute());
-  };
+    setOutput(
+      compute(
+        scheme,
+        recoverable,
+        reservedMode,
+        failureRate,
+        tve,
+        switcherFailureRate,
+        exploitationTime
+      )
+    );
+  }, [
+    scheme,
+    recoverable,
+    reservedMode,
+    failureRate,
+    tve,
+    switcherFailureRate,
+    exploitationTime,
+  ]);
 
   const data = {
-    applicationMode: [
-      { value: "ндп", text: "Непрерывное длительное применение" },
-      { value: "мцп", text: "Многократное циклическое применение" },
-      { value: "оп", text: "Однократное применение" },
-    ],
-    techService: [
-      { value: "обслуживаемые", text: "Обслуживаемые" },
-      { value: "необслуживаемые", text: "Необслуживаемые" },
-    ],
     recovery: [
-      { value: "восстанавливаемые", text: "Восстанавливаемые" },
       { value: "невосстанавливаемые", text: "Невосстанавливаемые" },
+      { value: "восстанавливаемые", text: "Восстанавливаемые" },
     ],
-    purpose: [
-      { value: "конкретное", text: "Конкретное" },
-      { value: "общее", text: "Общее" },
+    reserve: [
+      { value: LOADED, text: "Нагруженный" },
+      { value: UNLOADED, text: "Ненагруженный" },
+      { value: LIGHTWEIGHT, text: "Облегченный" },
     ],
   };
 
@@ -123,27 +89,11 @@ const ConditionsFormContent = () => {
       <div style={{ margin: "20px 50px 0px 20px" }}>
         <div className="form-group">
           <div className="form-item">
-            Назначение:
-            <select
-              className="form-control"
-              id={"purpose"}
-              onChange={() => changeInputDropdown("purpose")}
-            >
-              {data["purpose"].map(({ value, text }) => (
-                <option value={value} key={value}>
-                  {text}
-                </option>
-              ))}
-            </select>
-            <br />
-          </div>
-
-          <div className="form-item">
             Восстановление работоспособного состояния после отказа:
             <select
               className="form-control"
               id={"recovery"}
-              onChange={() => changeInputDropdown("recovery")}
+              onChange={handleToggleRecoverable}
             >
               {data["recovery"].map(({ value, text }) => (
                 <option value={value} key={value}>
@@ -154,36 +104,84 @@ const ConditionsFormContent = () => {
             <br />
           </div>
 
-          <div className="form-item">
-            Техническое обслуживание в процессе эксплуатации:
-            <select
-              className="form-control"
-              id={"techService"}
-              onChange={() => changeInputDropdown("techService")}
-            >
-              {data["techService"].map(({ value, text }) => (
-                <option value={value} key={value}>
-                  {text}
-                </option>
-              ))}
-            </select>
-            <br />
-          </div>
-          <div className="form-item">
-            Режим применения (функционирования):
-            <select
-              className="form-control"
-              id={"applicationMode"}
-              onChange={() => changeInputDropdown("applicationMode")}
-            >
-              {data["applicationMode"].map(({ value, text }) => (
-                <option value={value} key={value}>
-                  {text}
-                </option>
-              ))}
-            </select>
-            <br />
-          </div>
+          {showFailureRate && (
+            <div className="form-item">
+              <InputGroup size="sm" className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Text id="inputGroup-sizing-md">
+                    Интенсивность отказов элемента (число от 0 до 1)
+                  </InputGroup.Text>
+                </InputGroup.Prepend>
+                <FormControl
+                  onChange={handleFailureRateChange}
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-md"
+                  type="number"
+                  min="0"
+                  required
+                />
+              </InputGroup>
+            </div>
+          )}
+
+          {recoverable === true && (
+            <div className="form-item">
+              <InputGroup size="sm" className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Text id="inputGroup-sizing-md">
+                    Среднее время восстановления элемента ССН
+                  </InputGroup.Text>
+                </InputGroup.Prepend>
+                <FormControl
+                  onChange={handleTveChange}
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-md"
+                  type="number"
+                  min="0"
+                  required
+                />
+              </InputGroup>
+            </div>
+          )}
+
+          {/*isSwitcher && (
+            <div className="form-item">
+              <InputGroup size="sm" className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Text id="inputGroup-sizing-md">
+                    Интенсивность отказов переключателя (число от 0 до 1)
+                  </InputGroup.Text>
+                </InputGroup.Prepend>
+                <FormControl
+                  onChange={handleSwitcherFailureRateChange}
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-md"
+                  type="number"
+                  min="0"
+                  required
+                />
+              </InputGroup>
+            </div>
+          )*/}
+
+          {isReserved && (
+            <div className="form-item">
+              Режим резерва:
+              <select
+                className="form-control"
+                id={"recovery"}
+                onChange={handleChangeReserve}
+              >
+                {data["reserve"].map(({ value, text }) => (
+                  <option value={value} key={value}>
+                    {text}
+                  </option>
+                ))}
+              </select>
+              <br />
+            </div>
+          )}
+
           <div className="form-item">
             <InputGroup size="sm" className="mb-3">
               <InputGroup.Prepend>
@@ -192,6 +190,7 @@ const ConditionsFormContent = () => {
                 </InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
+                onChange={handleExploitationTimeChange}
                 aria-label="Small"
                 aria-describedby="inputGroup-sizing-md"
                 type="number"
@@ -199,27 +198,27 @@ const ConditionsFormContent = () => {
                 required
               />
             </InputGroup>
-            <br />
           </div>
         </div>
 
         <Button
           variant="secondary"
-          onClick={handleShow}
+          onClick={handleCalculateClick}
           style={{ width: "94%" }}
         >
           Рассчитать
         </Button>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header>
-            <Modal.Title>Вычисляемые показатели надежности</Modal.Title>
+        <Modal
+          show={show}
+          onHide={handleClose}
+          style={{ backgroundColor: "rgba(1, 1, 1, 0.5)" }}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Полученные показатели надежности</Modal.Title>
           </Modal.Header>
-          <Modal.Body>{output}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
+          <Modal.Body>
+            <Output result={output} />
+          </Modal.Body>
         </Modal>
       </div>
     </>

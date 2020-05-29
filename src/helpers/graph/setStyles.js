@@ -1,14 +1,9 @@
-import {
-  mxConstants,
-  mxPerimeter,
-  mxEdgeStyle,
-  mxEvent,
-} from "mxgraph-js";
+import { mxConstants, mxPerimeter, mxEdgeStyle, mxEvent } from "mxgraph-js";
 
 import inp from "../../assets/images/inp.png";
 import outp from "../../assets/images/outp.png";
 import loaded from "../../assets/images/loaded.png";
-import toggle from "../../assets/images/toggle.png";
+import switcher from "../../assets/images/switcher.png";
 
 export const setDefaultCellsStyle = (graph) => {
   /////////////////////////// EDGES STYLE
@@ -25,7 +20,10 @@ export const setDefaultCellsStyle = (graph) => {
 
   graph.connectionHandler.addListener(mxEvent.CONNECT, (sender, evt) => {
     const edge = evt.getProperty("cell");
-    if (edge.target.style === "mOfn" || (edge.source.style === "loaded" && edge.target.style !== "loaded")) {
+    if (
+      edge.target.style === "mOfn" ||
+      (edge.target.style === "rectangle" && edge.source.style === "loaded")
+    ) {
       const newStyle = graph.stylesheet.getCellStyle(
         'edgeStyle="";endArrow=openThin;'
       );
@@ -56,35 +54,35 @@ export const setVertexStyles = (graph) => {
   rectangleStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
   graph.getStylesheet().putCellStyle("rectangle", rectangleStyle);
 
+  /** стили блоков */
+  /** m из n */
   const mOfnStyle = {};
   mOfnStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
   mOfnStyle[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
   graph.getStylesheet().putCellStyle("mOfn", mOfnStyle);
 
-  const nodeStyle = {};
-  nodeStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
-  nodeStyle[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
-  nodeStyle[mxConstants.STYLE_FILLCOLOR] = "#000";
-  graph.getStylesheet().putCellStyle("node", nodeStyle);
+  /** переключатель */
+  const switcherStyle = {};
+  switcherStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
+  switcherStyle[mxConstants.STYLE_IMAGE] = switcher;
+  switcherStyle[mxConstants.STYLE_EDITABLE] = 0;
+  graph.getStylesheet().putCellStyle("switcher", switcherStyle);
 
-  const toggleStyle = {};
-  toggleStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
-  toggleStyle[mxConstants.STYLE_IMAGE] = toggle;
-  toggleStyle[mxConstants.STYLE_EDITABLE] = 0;
-  graph.getStylesheet().putCellStyle("toggle", toggleStyle);
-
+  /** вход */
   const inputStyle = {};
   inputStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
   inputStyle[mxConstants.STYLE_IMAGE] = inp;
   inputStyle[mxConstants.STYLE_EDITABLE] = 0;
   graph.getStylesheet().putCellStyle("input", inputStyle);
 
+  /** выход */
   const outputStyle = {};
   outputStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
   outputStyle[mxConstants.STYLE_IMAGE] = outp;
   outputStyle[mxConstants.STYLE_EDITABLE] = 0;
   graph.getStylesheet().putCellStyle("output", outputStyle);
 
+  /** резервный элемент */
   const loadedStyle = {};
   loadedStyle[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
   loadedStyle[mxConstants.STYLE_IMAGE] = loaded;

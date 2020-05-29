@@ -2,16 +2,22 @@ import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
 import ConditionsFormContent from "./ConditionsFormContent";
+import { checkReservedWithSwitcher } from "../helpers/calc/helpers";
 
 const EMPTY_GRAPH = "emptyGraph";
-const BLOCKS_NOT_INITIALIZED = "blocksNotInitialized";
-const VALUES_NOT_NUMERIC = "valuesNotNumeric";
+const NO_RECTANGLES = "noRectangles";
+// const BLOCKS_NOT_INITIALIZED = "blocksNotInitialized";
+// const VALUES_NOT_NUMERIC = "valuesNotNumeric";
 const NO_INPUT_OR_OUTPUT = "noInputOrOutput";
 const ELEMENT_WITHOUT_EDGES = "elementWithoutEdges";
 const M_OF_N = "mOfN";
+const SWITCHER = "switcher";
 
-const ModalWin = ({ graphNodes }) => {
+const ShemeValidator = ({ graphNodes }) => {
   const [show, setShow] = useState(false);
+
+  const [isReserved, setIsReserved] = useState(false);
+  const [isSwitcher, setIsSwitcher] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -34,7 +40,12 @@ const ModalWin = ({ graphNodes }) => {
       return;
     }
 
-    if (isNoInputOrOutput(graphNodes)) {
+    if (isNoRectangles(graphNodes, subGraphs)) {
+      setError(NO_RECTANGLES);
+      return;
+    }
+
+    if (isNoInputOrOutput(graphNodes, subGraphs)) {
       setError(NO_INPUT_OR_OUTPUT);
       return;
     }
@@ -44,6 +55,20 @@ const ModalWin = ({ graphNodes }) => {
       return;
     }
 
+    if (isSchemeIsReserved(graphNodes, subGraphs)) {
+      setIsReserved(true);
+    }
+
+    const [isError, isSwitcher] = checkSwitcher(graphNodes, subGraphs);
+
+    if (isSwitcher) {
+      setIsSwitcher(true);
+      if (isError) {
+        setError(SWITCHER);
+        return;
+      }
+    }
+    /*
     if (areBlocksNotInitialized(graphNodes, subGraphs)) {
       setError(BLOCKS_NOT_INITIALIZED);
       return;
@@ -52,7 +77,7 @@ const ModalWin = ({ graphNodes }) => {
       setError(VALUES_NOT_NUMERIC);
       return;
     }
-
+*/
     if (isIncorrectMOfN(graphNodes, subGraphs)) {
       setError(M_OF_N);
       return;
@@ -64,8 +89,23 @@ const ModalWin = ({ graphNodes }) => {
 
   const isEmptyGraph = (graph) => graph.length === 0;
 
+  const isNoRectangles = (graph, childLayers) => {
+    const main = graph.filter((v) => v.style === "rectangle").length > 0;
+
+    const children =
+      childLayers && childLayers.length > 0
+        ? childLayers.map(
+            (layer) =>
+              layer.filter((cell) => cell.style === "rectangle").length > 0
+          )
+        : true;
+
+    const res = children === true ? children : children.every((layer) => layer);
+
+    return !main || !res;
+  };
+  /*
   const areBlocksNotInitialized = (graph, childLayers) => {
-  
     const graphVertexes = graph
       .filter((cell) => ["rectangle", "mOfn", "loaded"].includes(cell.style))
       .every((cell) => cell.value);
@@ -81,12 +121,13 @@ const ModalWin = ({ graphNodes }) => {
           )
         : true;
 
-    const res = children === true ? children : children.every(layer => layer);
+    const res = children === true ? children : children.every((layer) => layer);
 
     return !graphVertexes || !res;
   };
-
-  const areValuesNotNumeric = (graph, childNodes) => {
+*/
+  /*
+  const areValuesNotNumeric = (graph, childLayers) => {
     const reNum = /^(0\.\d+)$|^1$/;
 
     const graphVertexes = graph
@@ -94,13 +135,67 @@ const ModalWin = ({ graphNodes }) => {
       .every((cell) => reNum.test(cell.value) || cell.value === "*");
 
     const childVertexes =
-      childNodes[0] && childNodes[0].length > 0
-        ? childNodes[0]
-          .filter((cell) => ["rectangle", "loaded"].includes(cell.style))
-          .every((cell) => reNum.test(cell.value) || cell.value === "*")
+      childLayers && childLayers.length > 0
+        ? childLayers.map((layer) =>
+            layer
+              .filter((cell) => ["rectangle", "loaded"].includes(cell.style))
+              .every((cell) => reNum.test(cell.value) || cell.value === "*")
+          )
         : true;
 
-    return !graphVertexes || !childVertexes;
+    const res =
+      childVertexes === true
+        ? childVertexes
+        : childVertexes.every((layer) => layer);
+
+    return !graphVertexes || !res;
+  };
+*/
+
+  const isSchemeIsReserved = (graph, childLayers) => {
+    const main = graph.filter((cell) => cell.style === "loaded").length > 0;
+
+    const children =
+      childLayers && childLayers.length > 0
+        ? childLayers.map(
+            (layer) =>
+              layer.filter((cell) => cell.style === "loaded").length > 0
+          )
+        : false;
+
+    const res =
+      children === false ? children : children.every((layer) => layer);
+
+    return main || res;
+  };
+
+  // todo func checkIsSwitcher + checkIsCorectSwitcherScheme
+
+  const checkSwitcher = (graph, childLayers) => {
+    debugger;
+    const main = checkReservedWithSwitcher(graph);
+
+    const children =
+      childLayers && childLayers.length > 0
+        ? childLayers.map((layer) => checkReservedWithSwitcher(layer))
+        : true;
+
+    const res = children === true ? children : children.every((layer) => layer);
+
+    let flag = false;
+    const isSwitcherOnChildScheme = childLayers && childLayers.length > 0 ? childLayers.map((layer) =>
+      layer.find((cell) => cell.style === "switcher")
+    ) : [];
+    
+    if (
+      (graph.find((v) => v.style === "switcher") ||
+        (isSwitcherOnChildScheme.length > 0 &&
+          isSwitcherOnChildScheme.some((layer) => layer))) &&
+      (!main || !res)
+    )
+      flag = true;
+
+    return [flag, !main || !res];
   };
 
   const isIncorrectMOfN = (graph, childLayers) => {
@@ -111,36 +206,67 @@ const ModalWin = ({ graphNodes }) => {
 
     const childMOfn =
       childLayers && childLayers.length > 0
-        ? childLayers
-          .filter((cell) => cell.style === "mOfn")
-          .every((cell) => reMOfn.test(cell.value))
+        ? childLayers.map((layer) =>
+            layer
+              .filter((cell) => cell.style === "mOfn")
+              .every((cell) => reMOfn.test(cell.value))
+          )
         : true;
 
-    const res = childMOfn === true ? childMOfn : childMOfn.every(layer => layer);
+    const res =
+      childMOfn === true ? childMOfn : childMOfn.every((layer) => layer);
 
     return !mOfn || !res;
   };
 
-  const isNoInputOrOutput = (graph) => {
-    return !(
+  const isNoInputOrOutput = (graph, childLayers) => {
+    const main =
       graph.filter((cell) => cell.style === "input").length === 1 &&
-      graph.filter((cell) => cell.style === "output").length === 1
-    );
-  };
+      graph.filter((cell) => cell.style === "output").length === 1;
 
-  const isElementWithoutEdges = (graph, childNodes) => {
-    const graphVertexes = graph
-      .filter((cell) => cell.vertex)
-      .every((cell) => cell.hasOwnProperty("edges"));
-
-    const childVertexes =
-      childNodes[0] && childNodes[0].length > 0
-        ? childNodes[0]
-            .filter((cell) => cell.vertex)
-            .filter((cell) => !cell.hasOwnProperty("edges")).length <= 1
+    const children =
+      childLayers && childLayers.length > 0
+        ? childLayers.map(
+            (layer) =>
+              layer.filter((cell) => cell.style === "input").length === 1 &&
+              layer.filter((cell) => cell.style === "output").length === 1
+          )
         : true;
 
-    return !graphVertexes || !childVertexes;
+    const res = children === true ? children : children.every((layer) => layer);
+    return !main || !res;
+  };
+
+  const isElementWithoutEdges = (graph, childLayers) => {
+    const graphVertexes = graph
+      .filter(
+        (cell) =>
+          cell.vertex && cell.style !== "input" && cell.style !== "output"
+      )
+      .every((cell) => cell.hasOwnProperty("edges") && cell.edges.length >= 2);
+
+    const childVertexes =
+      childLayers && childLayers.length > 0
+        ? childLayers.map((layer) =>
+            layer
+              .filter(
+                (cell) =>
+                  cell.vertex &&
+                  cell.style !== "input" &&
+                  cell.style !== "output"
+              )
+              .every(
+                (cell) => cell.hasOwnProperty("edges") && cell.edges.length >= 2
+              )
+          )
+        : true;
+
+    const res =
+      childVertexes === true
+        ? childVertexes
+        : childVertexes.every((layer) => layer);
+
+    return !graphVertexes || !res;
   };
 
   const renderEmptyGraph = () => (
@@ -154,6 +280,17 @@ const ModalWin = ({ graphNodes }) => {
     </>
   );
 
+  const renderNoRectangles = () => (
+    <>
+      <Modal.Header closeButton>
+        <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ padding: "10px" }}>
+        Отсутствуют основные блоки
+      </Modal.Body>
+    </>
+  );
+  /*
   const renderBlocksNotInitialized = () => (
     <>
       <Modal.Header closeButton>
@@ -165,7 +302,8 @@ const ModalWin = ({ graphNodes }) => {
       </Modal.Body>
     </>
   );
-
+*/
+  /*
   const renderValuesNotNumeric = () => (
     <>
       <Modal.Header closeButton>
@@ -177,7 +315,7 @@ const ModalWin = ({ graphNodes }) => {
       </Modal.Body>
     </>
   );
-
+*/
   const renderMOfN = () => (
     <>
       <Modal.Header closeButton>
@@ -211,6 +349,17 @@ const ModalWin = ({ graphNodes }) => {
     </>
   );
 
+  const renderSwitcherWrongScheme = () => (
+    <>
+      <Modal.Header closeButton>
+        <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ padding: "10px" }}>
+        Переключатель должен соединять основные элементы с резервными (минимум с двумя)
+      </Modal.Body>
+    </>
+  );
+
   return (
     <>
       <Button
@@ -230,18 +379,24 @@ const ModalWin = ({ graphNodes }) => {
       </Button>
       <Modal show={show} onHide={handleClose}>
         {error === EMPTY_GRAPH && renderEmptyGraph()}
-        {error === BLOCKS_NOT_INITIALIZED && renderBlocksNotInitialized()}
-        {error === VALUES_NOT_NUMERIC && renderValuesNotNumeric()}
+        {error === NO_RECTANGLES && renderNoRectangles()}
+        {/* error === BLOCKS_NOT_INITIALIZED && renderBlocksNotInitialized() */}
+        {/* error === VALUES_NOT_NUMERIC && renderValuesNotNumeric() */}
         {error === M_OF_N && renderMOfN()}
         {error === NO_INPUT_OR_OUTPUT && renderNoInputOrOutput()}
         {error === ELEMENT_WITHOUT_EDGES && renderElementWithoutEdges()}
+        {error === SWITCHER && renderSwitcherWrongScheme()}
         {error === null && (
           <>
             <Modal.Header closeButton>
               <Modal.Title>Параметры эксплуатации</Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ padding: "0", paddingBottom: "20px" }}>
-              <ConditionsFormContent />
+              <ConditionsFormContent
+                scheme={graphNodes}
+                isReserved={isReserved}
+                isSwitcher={isSwitcher}
+              />
             </Modal.Body>
           </>
         )}
@@ -250,4 +405,4 @@ const ModalWin = ({ graphNodes }) => {
   );
 };
 
-export default ModalWin;
+export default ShemeValidator;

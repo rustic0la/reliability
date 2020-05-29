@@ -3,7 +3,6 @@ import {
 	mxWindow,
 	mxGraph,
 	mxToolbar,
-	mxCodec,
 } from 'mxgraph-js';
 
 import setBaseConfig from './setGraphConfig';
@@ -14,9 +13,10 @@ import {
 } from './jsonCodec';
 
 const childCellModal = (graph, title, content, width, height, cell) => {
-	
+	/** id родительского элемента */
 	const id = cell.mxObjectId;
 
+	/** положение окна */
 	var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
 	var y = Math.max(
 		10,
@@ -25,7 +25,8 @@ const childCellModal = (graph, title, content, width, height, cell) => {
 
 	var wnd = new mxWindow(title, content, x, y, width, height, false, true);
 	wnd.setClosable(true);
-
+	
+	/** дублируем панели инструментов и элементов для текущего окна */
 	const tbCont = document.createElement('div');
 	tbCont.className = 'tbContainer';
 	tbCont.id = `tbCont${id}`;
@@ -44,10 +45,12 @@ const childCellModal = (graph, title, content, width, height, cell) => {
 		gr.addCells(cell.child, cell)
 	}
 	
+	/** если у данного элемента в памяти найдены дети - загружаем из памяти */
 	if (localStorage.getItem(`${id}`) !== '') {
 		renderJSON(JSON.parse(localStorage.getItem(`${id}`)), gr);
 	}
 
+	/** перед закрытием окна */
 	wnd.addListener(mxEvent.DESTROY, (evt) => {
 		const currentChildren = getJsonModel(gr);
 		if (currentChildren.length > 0) {
