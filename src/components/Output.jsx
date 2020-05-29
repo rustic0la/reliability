@@ -2,11 +2,12 @@ import React from "react";
 import { InputGroup, FormControl } from "react-bootstrap";
 
 const Output = ({ result }) => { 
+  /*
   const Pt = 'undefined';
   const To = 'undefined';
   const Tv = 'undefined';
   const Kg = 'undefined';
-  const Kog = 'undefined';
+  const Kog = 'undefined';*/
   
   
   return (

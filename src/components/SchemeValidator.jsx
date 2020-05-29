@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
-import ConditionsFormContent from "./ConditionsFormContent";
+import ConditionsFormContent from "./ConditionsForm";
 import { checkReservedWithSwitcher } from "../helpers/calc/helpers";
 
 const EMPTY_GRAPH = "emptyGraph";

@@ -14,7 +14,7 @@ const ConditionsFormContent = ({ scheme, isReserved, isSwitcher }) => {
 
   const [tve, setTve] = useState(null);
   const [reservedMode, setReservedMode] = useState(LOADED);
-  const [switcherFailureRate, setSwitcherFailureRate] = useState(null);
+  const [switcherFailureRate, ] = useState(null);
 
   const [exploitationTime, setExploitationTime] = useState(0);
   const [output, setOutput] = useState(null);
