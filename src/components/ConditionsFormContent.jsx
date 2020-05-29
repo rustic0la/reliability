@@ -36,11 +36,11 @@ const ConditionsFormContent = ({ scheme, isReserved, isSwitcher }) => {
   const handleTveChange = (e) => {
     setTve(e.target.value);
   };
-
+/*
   const handleSwitcherFailureRateChange = (e) => {
     setSwitcherFailureRate(e.target.value);
   };
-
+*/
   const handleChangeReserve = (e) => {
     setReservedMode(e.target.value);
   };
