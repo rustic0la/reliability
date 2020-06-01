@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Modal } from "react-bootstrap";
 
 import ConditionsFormContent from "./ConditionsForm";
-import { checkReservedWithSwitcher } from "../helpers/calc/helpers";
+import {
+  checkReservedWithSwitcher,
+  checkMajority,
+  checkTwoMajorities,
+} from "../helpers/calc/helpers";
 
 const EMPTY_GRAPH = "emptyGraph";
 const NO_RECTANGLES = "noRectangles";
@@ -13,79 +17,78 @@ const ELEMENT_WITHOUT_EDGES = "elementWithoutEdges";
 const M_OF_N = "mOfN";
 const SWITCHER = "switcher";
 
-const ShemeValidator = ({ graphNodes }) => {
-  const [show, setShow] = useState(false);
-
+const ShemeValidator = ({ graphNodes, show, onHide }) => {
   const [isReserved, setIsReserved] = useState(false);
   const [isSwitcher, setIsSwitcher] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => {
-    checkValidity();
-    setShow(true);
-  };
+  const [isMajority, setIsMajority] = useState(false);
 
   const [error, setError] = useState(null);
 
-  const checkValidity = () => {
-    const subGraphsJSON = Object.entries(localStorage).filter((item) =>
-      item[0].includes("mxCell")
-    );
-    const subGraphs = subGraphsJSON.reduce(
-      (acc, [, value]) => [...acc, JSON.parse(value)],
-      []
-    );
-    if (isEmptyGraph(graphNodes)) {
-      setError(EMPTY_GRAPH);
-      return;
-    }
-
-    if (isNoRectangles(graphNodes, subGraphs)) {
-      setError(NO_RECTANGLES);
-      return;
-    }
-
-    if (isNoInputOrOutput(graphNodes, subGraphs)) {
-      setError(NO_INPUT_OR_OUTPUT);
-      return;
-    }
-
-    if (isElementWithoutEdges(graphNodes, subGraphs)) {
-      setError(ELEMENT_WITHOUT_EDGES);
-      return;
-    }
-
-    if (isSchemeIsReserved(graphNodes, subGraphs)) {
-      setIsReserved(true);
-    }
-
-    const [isError, isSwitcher] = checkSwitcher(graphNodes, subGraphs);
-
-    if (isSwitcher) {
-      setIsSwitcher(true);
-      if (isError) {
-        setError(SWITCHER);
+  useEffect(() => {
+    const checkValidity = () => {
+      const subGraphsJSON = Object.entries(localStorage).filter((item) =>
+        item[0].includes("mxCell")
+      );
+      const subGraphs = subGraphsJSON.reduce(
+        (acc, [, value]) => [...acc, JSON.parse(value)],
+        []
+      );
+      if (isEmptyGraph(graphNodes)) {
+        setError(EMPTY_GRAPH);
         return;
       }
-    }
-    /*
-    if (areBlocksNotInitialized(graphNodes, subGraphs)) {
-      setError(BLOCKS_NOT_INITIALIZED);
+  
+      if (isNoRectangles(graphNodes, subGraphs)) {
+        setError(NO_RECTANGLES);
+        return;
+      }
+  
+      if (isNoInputOrOutput(graphNodes, subGraphs)) {
+        setError(NO_INPUT_OR_OUTPUT);
+        return;
+      }
+  
+      if (isElementWithoutEdges(graphNodes, subGraphs)) {
+        setError(ELEMENT_WITHOUT_EDGES);
+        return;
+      }
+  
+      if (isSchemeIsReserved(graphNodes, subGraphs)) {
+        setIsReserved(true);
+      }
+  
+      if (checkIsMajority(graphNodes, subGraphs)) {
+        setIsMajority(true);
+      }
+  
+      if (checkIsSwitcher(graphNodes, subGraphs)) {
+        setIsSwitcher(true);
+        if (checkIsSwitcherSchemeCorrect(graphNodes, subGraphs)) {
+          setError(SWITCHER);
+          return;
+        }
+      }
+      /*
+      if (areBlocksNotInitialized(graphNodes, subGraphs)) {
+        setError(BLOCKS_NOT_INITIALIZED);
+        return;
+      }
+      if (areValuesNotNumeric(graphNodes, subGraphs)) {
+        setError(VALUES_NOT_NUMERIC);
+        return;
+      }
+  */
+      if (isIncorrectMOfN(graphNodes, subGraphs)) {
+        setError(M_OF_N);
+        return;
+      }
+  
+      setError(null);
       return;
-    }
-    if (areValuesNotNumeric(graphNodes, subGraphs)) {
-      setError(VALUES_NOT_NUMERIC);
-      return;
-    }
-*/
-    if (isIncorrectMOfN(graphNodes, subGraphs)) {
-      setError(M_OF_N);
-      return;
-    }
+    };
 
-    setError(null);
-    return;
-  };
+    checkValidity();
+  }, [])
 
   const isEmptyGraph = (graph) => graph.length === 0;
 
@@ -169,10 +172,57 @@ const ShemeValidator = ({ graphNodes }) => {
     return main || res;
   };
 
-  // todo func checkIsSwitcher + checkIsCorectSwitcherScheme
+  const checkIsSwitcher = (graph, childLayers) => {
+    const main = graph.filter((cell) => cell.style === "switcher").length > 0;
 
-  const checkSwitcher = (graph, childLayers) => {
-    debugger;
+    const children =
+      childLayers && childLayers.length > 0
+        ? childLayers.map(
+            (layer) =>
+              layer.filter((cell) => cell.style === "switcher").length > 0
+          )
+        : false;
+
+    const res =
+      children === false ? children : children.every((layer) => layer);
+
+    return main || res;
+  };
+
+  const checkIsMajority = (graph, childLayers) => {
+    const inputId =
+      graph.find((node) => node.style === "input") &&
+      graph.find((node) => node.style === "input").id;
+    const outputId =
+      graph.find((node) => node.style === "output") &&
+      graph.find((node) => node.style === "output").id;
+    const main =
+      checkMajority(graph, inputId, outputId) ||
+      checkTwoMajorities(graph, inputId, outputId);
+
+    const children =
+      childLayers && childLayers.length > 0
+        ? childLayers.map((layer) => {
+            const inputId =
+              layer.find((node) => node.style === "input") &&
+              layer.find((node) => node.style === "input").id;
+            const outputId =
+              layer.find((node) => node.style === "output") &&
+              layer.find((node) => node.style === "output").id;
+            return (
+              checkMajority(layer, inputId, outputId) ||
+              checkTwoMajorities(layer, inputId, outputId)
+            );
+          })
+        : false;
+
+    const res =
+      children === false ? children : children.every((layer) => layer);
+
+    return main || res;
+  };
+
+  const checkIsSwitcherSchemeCorrect = (graph, childLayers) => {
     const main = checkReservedWithSwitcher(graph);
 
     const children =
@@ -182,20 +232,7 @@ const ShemeValidator = ({ graphNodes }) => {
 
     const res = children === true ? children : children.every((layer) => layer);
 
-    let flag = false;
-    const isSwitcherOnChildScheme = childLayers && childLayers.length > 0 ? childLayers.map((layer) =>
-      layer.find((cell) => cell.style === "switcher")
-    ) : [];
-    
-    if (
-      (graph.find((v) => v.style === "switcher") ||
-        (isSwitcherOnChildScheme.length > 0 &&
-          isSwitcherOnChildScheme.some((layer) => layer))) &&
-      (!main || !res)
-    )
-      flag = true;
-
-    return [flag, !main || !res];
+    return !main || !res;
   };
 
   const isIncorrectMOfN = (graph, childLayers) => {
@@ -355,29 +392,14 @@ const ShemeValidator = ({ graphNodes }) => {
         <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ padding: "10px" }}>
-        Переключатель должен соединять основные элементы с резервными (минимум с двумя)
+        Переключатель должен соединять основные элементы с резервными (минимум с
+        двумя)
       </Modal.Body>
     </>
   );
 
   return (
-    <>
-      <Button
-        onClick={handleShow}
-        style={{
-          fontSize: "16px",
-          padding: "3px",
-          position: "absolute",
-          top: "3px",
-          right: "15px",
-          marginTop: "2px",
-          background: "rgb(82, 74, 228)",
-          color: "#fff",
-        }}
-      >
-        Рассчитать
-      </Button>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={onHide}>
         {error === EMPTY_GRAPH && renderEmptyGraph()}
         {error === NO_RECTANGLES && renderNoRectangles()}
         {/* error === BLOCKS_NOT_INITIALIZED && renderBlocksNotInitialized() */}
@@ -387,21 +409,14 @@ const ShemeValidator = ({ graphNodes }) => {
         {error === ELEMENT_WITHOUT_EDGES && renderElementWithoutEdges()}
         {error === SWITCHER && renderSwitcherWrongScheme()}
         {error === null && (
-          <>
-            <Modal.Header closeButton>
-              <Modal.Title>Параметры эксплуатации</Modal.Title>
-            </Modal.Header>
-            <Modal.Body style={{ padding: "0", paddingBottom: "20px" }}>
-              <ConditionsFormContent
-                scheme={graphNodes}
-                isReserved={isReserved}
-                isSwitcher={isSwitcher}
-              />
-            </Modal.Body>
-          </>
+          <ConditionsFormContent
+            scheme={graphNodes}
+            isReserved={isReserved}
+            isSwitcher={isSwitcher}
+            isMajority={isMajority}
+          />
         )}
       </Modal>
-    </>
   );
 };
 

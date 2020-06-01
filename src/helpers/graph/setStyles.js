@@ -20,9 +20,18 @@ export const setDefaultCellsStyle = (graph) => {
 
   graph.connectionHandler.addListener(mxEvent.CONNECT, (sender, evt) => {
     const edge = evt.getProperty("cell");
+    const edgeSource = Object.values(graph.model.cells).find(
+      (c) => c.id === edge.source.id
+    );
+    const edgeFromSwitcher = edgeSource.edges.filter(
+      (e) =>
+        (e.source.id === edgeSource.id && e.target.style === "switcher") ||
+        (e.target.id === edgeSource.id && e.source.style === "switcher")
+    )[0];
+
     if (
       edge.target.style === "mOfn" ||
-      (edge.target.style === "rectangle" && edge.source.style === "loaded")
+      (!edgeFromSwitcher && edge.target.style === "rectangle" && edge.source.style === "loaded")
     ) {
       const newStyle = graph.stylesheet.getCellStyle(
         'edgeStyle="";endArrow=openThin;'

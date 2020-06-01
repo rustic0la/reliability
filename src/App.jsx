@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-import ConditionsFormContent from './components/ConditionsFormContent';
+import ConditionsForm from './components/ConditionsForm';
 import Editor from './components/Editor';
 import StartPage from './components/StartPage';
 import './App.css';
@@ -10,7 +10,6 @@ const App = () => (
 	<Router>
 		<Switch>
 			<Route path="/" exact component={StartPage} />
-			<Route path="/calculator" exact component={ConditionsFormContent} />
 			<Route path="/mxgraph" exact component={Editor} />
 		</Switch>
 	</Router>

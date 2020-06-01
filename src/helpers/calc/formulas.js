@@ -13,80 +13,84 @@ const combine = (n, k) => (factorial(n) / factorial(n - k)) * factorial(k);
 
 //! Невосстанавливавемые
 
-const unrecoverable = {
+export const unrecoverable = {
   sequent: {
     p: (n, lamb, t) => {
       let prod = 1;
-      for (let i = 1; i < n; i += 1) {
+      for (let i = 0; i < n; i += 1) {
         prod *= Math.exp(-lamb * t);
       }
       return prod;
     },
     to: (n, lamb) => {
       let sum = 0;
-      for (let i = 1; i < n; i += 1) {
+      for (let i = 0; i < n; i += 1) {
         sum += lamb;
       }
       return 1 / sum;
     },
   },
-  reserve: {
-    loaded: {
-      p: (n, m, lambda, t) => {
-        let res = 0;
-        for (let i = 1; i < m; i += 1) {
-          res +=
-            combine(n + m, i) *
-            Math.exp(-(n + m - i) * lambda * t) *
-            (1 - Math.exp(-lambda * t)) ** i;
-            console.log(i, res)
-        }
-        return res;
-      },
-      to: (n, m, lambda) => {
-        let res = 0;
-        for (let i = 0; i <= m; i += 1) {
-          res += 1 / (n + m - i);
-        }
-        return (1 / lambda) * res;
-      },
+  reserved_loaded: {
+    p: (n, m, lambda, t) => {
+      let res = 0;
+      for (let i = 0; i < m; i += 1) {
+        res +=
+          combine(n + m, i) *
+          Math.exp(-(n + m - i) * lambda * t) *
+          (1 - Math.exp(-lambda * t)) ** i;
+      }
+      return res;
     },
-    lightweight: {
-      p: (n, m, lambda, alpha, t) => {
-        let summ = 0;
-        let prod = 1;
-        for (let i = 0; i <= m; i += 1) {
-          prod *= n + i * alpha;
-          summ +=
-            (-1) ** i *
-            (combine(m, i) / (n + i * alpha)) *
-            Math.exp(-(n + i * alpha) * lambda * t);
-        }
-        return (prod / (alpha ** m * factorial(m))) * summ;
-      },
-      to: (n, m, lambda, alpha) => {
-        let res = 0;
-        for (let i = 0; i <= m; i += 1) {
-          res += 1 / (n + i * alpha);
-          i += 1;
-        }
-        return 1 / lambda + res;
-      },
-    },
-    unloaded: {
-      p: (n, m, lambda, t) => {
-        let summ = 0;
-        for (let i = 0; i < m; i += 1) {
-          summ += (n ** i * (lambda * t) ** i) / factorial(i);
-        }
-        return Math.exp(-n * lambda * t) * summ;
-      },
-      to: (n, m, lambda) => {
-        return (m + 1) / (n * lambda);
-      },
+    to: (n, m, lambda) => {
+      let res = 0;
+      for (let i = 0; i < m; i += 1) {
+        res += 1 / (n + m - i);
+      }
+      return res * (1 / lambda);
     },
   },
-  reserveWithSwitcher: {
+  reserved_lightweight: {
+    p: (n, m, lambda, alpha, t) => {
+      let summ = 0;
+      let prod = 1;
+      for (let j = 0; j < m; j += 1) {
+        prod *= n + j * alpha;
+        console.log("prod", j, prod);
+      }
+      prod = prod / (alpha ** m * factorial(m));
+
+      for (let i = 0; i < m; i += 1) {
+        summ +=
+          //((-1) ** i) *
+          (combine(m, i) / (n + i * alpha)) *
+          Math.exp(-(n + i * alpha) * lambda * t);
+        console.log("summ", i, summ);
+      }
+      return prod * summ;
+    },
+    to: (n, m, lambda, alpha) => {
+      let res = 0;
+      for (let i = 0; i <= m; i += 1) {
+        res += 1 / (n + i * alpha);
+        i += 1;
+      }
+      return 1 / lambda + res;
+    },
+  },
+  reserved_unloaded: {
+    p: (n, m, lambda, t) => {
+      let summ = 0;
+      for (let i = 1; i < m; i += 1) {
+        summ += (n * lambda * t) ** i / factorial(i);
+      }
+      return Math.exp(-n * lambda * t) * summ;
+    },
+    to: (n, m, lambda) => {
+      return (m + 1) / (n * lambda);
+    },
+  },
+
+  reserved_with_switcher: {
     p: (n, m, lambda, switcher, t) => {
       const s1 = ((n + m) * lambda) / (n * lambda + switcher);
       const s2 =
@@ -97,19 +101,26 @@ const unrecoverable = {
         n * lambda * Math.exp(-(n + m) * lambda + switcher) * t;
       return s1 * s2 + s3 * s4;
     },
-    to: (pt) => {
-      return integrate(pt, 0, 10000);
+    to: (n, m, lambda, switcher) => {
+      const a = ((n * lambda) / (n + m)) * lambda + switcher;
+      const b = ((n + m) * lambda) / ((n + m) * lambda + switcher);
+      const e = (n + m) / (m * lambda + switcher);
+      const c = switcher / ((n + m) * lambda + switcher);
+      const d = 1 / (n * lambda) + (n + m) / (m * lambda + switcher);
+      return a + b * e + c * d;
     },
   },
   majority: {
-    p: (lambda1, lambda2, t) =>
-      (Math.exp(-3 * lambda1 * t) +
+    p: (lambda1, lambda2, t) => {
+      const res = (Math.exp(-3 * lambda1 * t) +
         3 * Math.exp(-2 * lambda1 * t) * (1 - Math.exp(-lambda1 * t))) *
-      Math.exp(-lambda2 * t),
+      Math.exp(-lambda2 * t);
+      return res
+    },
     to: (lambda1, lambda2) =>
       3 / (2 * lambda1 + lambda2) - 2 / (3 * lambda1 + lambda2),
   },
-  twoMajorities: {
+  two_majorities: {
     p: (lambda1, lambda2, t) => {
       const prod1 =
         3 * Math.exp(-2 * lambda1 * t) * (1 - Math.exp(-lambda1 * t));
@@ -119,17 +130,18 @@ const unrecoverable = {
       const sum2 = Math.exp(-3 * lambda2 * t) + prod2;
       return sum1 * sum2;
     },
-    t: (lambda1, lambda2) =>
-      (35 / 6) * (lambda1 + lambda2) -
-      6 / (2 * lambda1 + 3 * lambda2) -
-      6 / (3 * lambda1 + 2 * lambda2),
+    to: (lambda1, lambda2) => {
+      return (
+        35 / (6 * (lambda1 + lambda2)) -
+        6 / (2 * lambda1 + 3 * lambda2) -
+        6 / (3 * lambda1 + 2 * lambda2)
+      );
+    },
   },
 };
 
-console.log(unrecoverable.reserve.lightweight.p(4, 3, 0.0001, 10))
-
 //! восстанавливавемые
-const recoverable = {
+export const recoverable = {
   sequent: {
     kg: (n, lamb, tve) => {
       let prod = 1;
@@ -161,61 +173,60 @@ const recoverable = {
       return prod;
     },
   },
-  reserve: {
-    loaded: {
-      kg: (tv, to) => 1 / (1 + tv / to),
-      to: (n, m, lambda, tve) => {
-        let sum1 = 0;
-        for (let i = 0; i < m; i += 1) {
-          sum1 += combine(i, n + m) * (lambda, tve) ** i;
-        }
-        return (
-          ((1 / (n * lambda)) * sum1) /
-          (combine(m, n + m) * (lambda * tve) ** m)
-        );
-      },
-      tv: (tve, m) => tve / (m + 1),
-      p: (to, t) => Math.exp(-t / to),
-      kog: (kg, t, to) => kg * Math.exp(-t / to),
+
+  reserved_loaded: {
+    kg: (tv, to) => 1 / (1 + tv / to),
+    to: (n, m, lambda, tve) => {
+      let sum1 = 0;
+      for (let i = 0; i < m; i += 1) {
+        sum1 += combine(i, n + m) * (lambda, tve) ** i;
+      }
+      return (
+        ((1 / (n * lambda)) * sum1) / (combine(m, n + m) * (lambda * tve) ** m)
+      );
     },
-    lightweight: {
-      kg: (tv, to) => 1 / (1 + tv / to),
-      to: (n, m, lambda, tve, alpha) => {
-        let sum1 = 0;
-        for (let i = 0; i < m; i += 1) {
-          let prod1 = 1;
-          for (let r = 1; r < i; r += 1) {
-            prod1 *= n + (m + 1 - r) * alpha;
-          }
-          sum1 += ((lambda * tve) ** i / factorial(i)) * prod1;
-        }
-        let prod2 = 1;
-        for (let r = 1; r < m + 1; r += 1) {
-          prod2 *= n + (m + 1 - r) * alpha;
-        }
-        return (
-          (((factorial(m) / lambda) * (1 + sum1)) / prod2) * (lambda * tve) ** m
-        );
-      },
-      tv: (tve, m) => tve / (m + 1),
-      p: (to, t) => Math.exp(-t / to),
-      kog: (kg, t, to) => kg * Math.exp(-t / to),
-    },
-    unloaded: {
-      kg: (tv, to) => 1 / (1 + tv / to),
-      to: (n, m, lambda, tve) => {
-        let sum1 = 0;
-        for (let i = 0; i < m; i += 1) {
-          sum1 += (combine(i, m) * factorial(i)) / (n * lambda * tve) ** i;
-        }
-        return (1 / (n * lambda)) * sum1;
-      },
-      tv: (tve, m) => tve / (m + 1),
-      p: (to, t) => Math.exp(-t / to),
-      kog: (kg, t, to) => kg * Math.exp(-t / to),
-    },
+    tv: (tve, m) => tve / (m + 1),
+    p: (to, t) => Math.exp(-t / to),
+    kog: (kg, t, to) => kg * Math.exp(-t / to),
   },
-  reserveWithSwitcher: {
+  reserved_lightweight: {
+    kg: (tv, to) => 1 / (1 + tv / to),
+    to: (n, m, lambda, tve, alpha) => {
+      let sum1 = 0;
+      for (let i = 0; i < m; i += 1) {
+        let prod1 = 1;
+        for (let r = 1; r < i; r += 1) {
+          prod1 *= n + (m + 1 - r) * alpha;
+        }
+        sum1 += ((lambda * tve) ** i / factorial(i)) * prod1;
+      }
+      let prod2 = 1;
+      for (let r = 1; r < m + 1; r += 1) {
+        prod2 *= n + (m + 1 - r) * alpha;
+      }
+      return (
+        (((factorial(m) / lambda) * (1 + sum1)) / prod2) * (lambda * tve) ** m
+      );
+    },
+    tv: (tve, m) => tve / (m + 1),
+    p: (to, t) => Math.exp(-t / to),
+    kog: (kg, t, to) => kg * Math.exp(-t / to),
+  },
+  reserved_unloaded: {
+    kg: (tv, to) => 1 / (1 + tv / to),
+    to: (n, m, lambda, tve) => {
+      let sum1 = 0;
+      for (let i = 0; i < m; i += 1) {
+        sum1 += (combine(i, m) * factorial(i)) / (n * lambda * tve) ** i;
+      }
+      return (1 / (n * lambda)) * sum1;
+    },
+    tv: (tve, m) => tve / (m + 1),
+    p: (to, t) => Math.exp(-t / to),
+    kog: (kg, t, to) => kg * Math.exp(-t / to),
+  },
+
+  reserved_with_switcher: {
     kg: (n, m, lambda, switcher, tve) => {
       let sum1 = 0;
       let sum2 = 0;
@@ -258,32 +269,32 @@ const recoverable = {
     p: (to, t) => Math.exp(-t / to),
     kog: (kg, t, to) => kg * Math.exp(-t / to),
   },
-  oneMainManyReserve: {
+  one_main_many_reserved: {
     // m + 1 = N
-    kg: (m, lambdas, tves) => {
+    kg: (m, lambda, tve) => {
       let prod1 = 1;
       for (let j = 0; j < m + 1; j += 1) {
-        prod1 *= (lambdas[j] * tves[j]) / (1 + lambdas[j] * tves[j]);
+        prod1 *= (lambda * tve) / (1 + lambda * tve);
       }
       return 1 - prod1;
     },
-    to: (m, lambdas, tves) => {
+    to: (m, lambda, tve) => {
       let prod1 = 1;
       let prod2 = 1;
       let prod3 = 1;
       let prod4 = 1;
       for (let j = 1; j < m + 1; j += 1) {
-        prod1 *= 1 + lambdas[j] * tves[j];
-        prod2 *= lambdas[j] * tves[j];
-        prod3 *= 1 / tves[j];
-        prod4 *= lambdas[j] * tves[j];
+        prod1 *= 1 + lambda * tve;
+        prod2 *= lambda * tve;
+        prod3 *= 1 / tve;
+        prod4 *= lambda * tve;
       }
       return (prod1 - prod2) / (prod3 * prod4);
     },
-    tv: (m, tves) => {
+    tv: (m, tve) => {
       let sum1 = 0;
       for (let j = 0; j < m + 1; j += 1) {
-        sum1 += 1 / tves[j];
+        sum1 += 1 / tve;
       }
       return 1 / sum1;
     },
@@ -302,7 +313,7 @@ const recoverable = {
     p: (to, t) => Math.exp(-t / to),
     kog: (kg, t, to) => kg * Math.exp(-t / to),
   },
-  twoMajorities: {
+  two_majorities: {
     kg: (tv, to) => 1 / (1 + tv / to),
     to: (lambda1, lambda2, tve1, tve2) =>
       ((1 + 3 * lambda1 * tve1) * (1 + 3 * lambda2 * tve2)) /
