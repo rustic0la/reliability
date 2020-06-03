@@ -15,13 +15,14 @@ import {
 const childCellModal = (graph, title, content, width, height, cell) => {
 	/** id родительского элемента */
 	const id = cell.mxObjectId;
+	const coord = +id.split('#')[1];
 
 	/** положение окна */
-	var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
+	var x = Math.max(0, document.body.scrollWidth / 2 - width / 2) + coord * 5;
 	var y = Math.max(
 		10,
 		document.body.scrollHeight || document.documentElement.scrollHeight,
-	);
+	) + coord * 5;
 
 	var wnd = new mxWindow(title, content, x, y, width, height, false, true);
 	wnd.setClosable(true);

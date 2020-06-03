@@ -178,12 +178,25 @@ export const recoverable = {
     kg: (tv, to) => 1 / (1 + tv / to),
     to: (n, m, lambda, tve) => {
       let sum1 = 0;
-      for (let i = 0; i < m; i += 1) {
-        sum1 += combine(i, n + m) * (lambda, tve) ** i;
+      for (let i = 1; i <= m; i += 1) {
+        sum1 += combine(n + m, i) * (lambda, tve) ** i;
       }
       return (
-        ((1 / (n * lambda)) * sum1) / (combine(m, n + m) * (lambda * tve) ** m)
+        ((1 / (n * lambda)) * sum1) / (combine(n + m, m) * (lambda * tve) ** m)
       );
+    },
+    tv: (tve, m) => tve / (m + 1),
+    p: (to, t) => Math.exp(-t / to),
+    kog: (kg, t, to) => kg * Math.exp(-t / to),
+  },
+  reserved_unloaded: {
+    kg: (tv, to) => 1 / (1 + tv / to),
+    to: (n, m, lambda, tve) => {
+      let sum1 = 0;
+      for (let i = 1; i <= m; i += 1) {
+        sum1 += (combine(m, i) * factorial(i)) / (n * lambda * tve) ** i;
+      }
+      return (1 / (n * lambda)) * sum1;
     },
     tv: (tve, m) => tve / (m + 1),
     p: (to, t) => Math.exp(-t / to),
@@ -193,7 +206,7 @@ export const recoverable = {
     kg: (tv, to) => 1 / (1 + tv / to),
     to: (n, m, lambda, tve, alpha) => {
       let sum1 = 0;
-      for (let i = 0; i < m; i += 1) {
+      for (let i = 1; i <= m; i += 1) {
         let prod1 = 1;
         for (let r = 1; r < i; r += 1) {
           prod1 *= n + (m + 1 - r) * alpha;
@@ -212,57 +225,43 @@ export const recoverable = {
     p: (to, t) => Math.exp(-t / to),
     kog: (kg, t, to) => kg * Math.exp(-t / to),
   },
-  reserved_unloaded: {
-    kg: (tv, to) => 1 / (1 + tv / to),
-    to: (n, m, lambda, tve) => {
-      let sum1 = 0;
-      for (let i = 0; i < m; i += 1) {
-        sum1 += (combine(i, m) * factorial(i)) / (n * lambda * tve) ** i;
-      }
-      return (1 / (n * lambda)) * sum1;
-    },
-    tv: (tve, m) => tve / (m + 1),
-    p: (to, t) => Math.exp(-t / to),
-    kog: (kg, t, to) => kg * Math.exp(-t / to),
-  },
-
   reserved_with_switcher: {
     kg: (n, m, lambda, switcher, tve) => {
       let sum1 = 0;
       let sum2 = 0;
-      for (let i = 0; i < m - 1; i += 1) {
-        sum1 +=
-          combine(i, n + m) *
-          (lambda * tve) ** i *
-          (1 + (switcher * tve) / (i + 1));
-        sum2 +=
-          combine(i, n + m) *
-          lambda ** i *
-          switcher *
-          tve ** (i + 1) *
-          (1 / (i + 1) +
-            ((n * factorial(i)) / factorial(i + 2)) * lambda * tve);
+      for (let i = 1; i <= m - 1; i += 1) {
+        const a = combine(n + m, i);
+        const b = (lambda * tve) ** i;
+        const c = (1 + (switcher * tve) / (i + 1));
+        sum1 += a * b * c;
+        const e = combine(n + m, i);
+        const d = lambda ** i;
+        const f = tve ** (i + 1);
+        const g = 1 / (i + 1) + ((n * factorial(i)) / factorial(i + 2)) * lambda * tve;
+        sum2 += e * d * f * g;
       }
       return (
-        (combine(m, n + m) * (lambda * tve) ** m + sum1) /
+        (combine(n + m, m) * (lambda * tve) ** m + sum1) /
         ((1 + lambda * tve) ** (n + m) + sum2)
       );
     },
     to: (n, m, lambda, switcher, tve) => {
       let sum1 = 0;
       let sum2 = 0;
-      for (let i = 0; i < m - 1; i += 1) {
-        sum1 +=
-          combine(i, n + m) *
-          (lambda * tve) ** i *
-          (1 +
-            (switcher * tve) / (i + 1) +
-            combine(m, n + m) * (lambda * tve) ** m);
-        sum2 += combine(i, n + m) * (lambda * tve) ** i * (1 / (i + 1));
+      for (let i = 1; i <= m - 1; i += 1) {
+        const a = combine(n + m, i);
+        const b = (lambda * tve) ** i;
+        const c = (switcher * tve) / (i + 1);
+        const d = combine(n + m, m) * (lambda * tve) ** m;
+        sum1 += a * b * (1 + c + d);
+        const e = combine(n + m, i);
+        const f = (lambda * tve) ** i; 
+        const g = 1 / (i + 1);
+        sum2 += e * f * g;
       }
       return (
         ((1 / (n * lambda)) * sum1) /
-        (combine(m, n + m) * (lambda * tve) ** m + switcher * tve * sum2)
+        (combine(n + m, m) * (lambda * tve) ** m + switcher * tve * sum2)
       );
     },
     tv: (to, kg) => (to * (1 - kg)) / kg,

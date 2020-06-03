@@ -66,7 +66,6 @@ const ConditionsForm = ({ scheme, isReserved, isSwitcher, isMajority }) => {
   };
 
   const handleCalculateClick = useCallback(() => {
-    debugger
     setShow(true);
     setOutput(
       compute({
@@ -217,11 +216,12 @@ const ConditionsForm = ({ scheme, isReserved, isSwitcher, isMajority }) => {
                     </InputGroup.Prepend>
                     <FormControl
                       onChange={handleSwitcherFailureRateChange}
+                      placeholder="0"
                       aria-label="Small"
                       aria-describedby="inputGroup-sizing-md"
                       type="number"
                       min="0"
-                      required
+                      required={true}
                     />
                   </InputGroup>
                 </div>

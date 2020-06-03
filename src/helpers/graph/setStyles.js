@@ -23,6 +23,30 @@ export const setDefaultCellsStyle = (graph) => {
     const edgeSource = Object.values(graph.model.cells).find(
       (c) => c.id === edge.source.id
     );
+
+    const entryX = edge.style
+      .split(";")
+      .find((s) => s.substr(0, 6) === "entryX")
+      .split("=")[1];
+    const entryY = edge.style
+      .split(";")
+      .find((s) => s.substr(0, 6) === "entryY")
+      .split("=")[1];
+
+    if (
+      entryX === "0.5" &&
+      entryY === "1" &&
+      edgeSource.style === "rectangle" &&
+      edge.target.style === "rectangle"
+    ) {
+      const newStyle = graph.stylesheet.getCellStyle(
+        'edgeStyle="";endArrow=openThin;'
+      );
+      let array = [];
+      for (let prop in newStyle) array.push(prop + "=" + newStyle[prop]);
+      edge.style = array.join(";");
+    }
+
     const edgeFromSwitcher = edgeSource.edges.filter(
       (e) =>
         (e.source.id === edgeSource.id && e.target.style === "switcher") ||
@@ -31,7 +55,11 @@ export const setDefaultCellsStyle = (graph) => {
 
     if (
       edge.target.style === "mOfn" ||
-      (!edgeFromSwitcher && edge.target.style === "rectangle" && edge.source.style === "loaded")
+      (!edgeFromSwitcher &&
+        edge.target.style === "rectangle" &&
+        edge.source.style === "loaded" &&
+        (!(entryX === "0" && entryY === "0.5") &&
+          !(entryX === "1" && entryY === "0.5")))
     ) {
       const newStyle = graph.stylesheet.getCellStyle(
         'edgeStyle="";endArrow=openThin;'

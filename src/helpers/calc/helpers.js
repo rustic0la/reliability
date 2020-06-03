@@ -7,6 +7,7 @@ const LIGHTWEIGHT = "lightweight";
 const types = {
   SEQUENT: "sequent",
   PARALLEL: "parallel",
+  RESERVED: "reserved",
   RESERVED_LOADED: "reserved_loaded",
   RESERVED_UNLOADED: "reserved_unloaded",
   RESERVED_LIGHTWEIGHT: "reserved_lightweight",
@@ -105,8 +106,9 @@ const restoreGraphStructure = (graphStructureNodes, subGraphs) => {
 };
 
 /** схема - параллельная */
+/*
 const checkParallel = (nodes, inputId, outputId) => {
-  const vertexes = nodes.filter(v => v.style === 'rectangle');
+  const vertexes = nodes.filter((v) => v.style !== "input" && v.style !== 'output');
   return vertexes.every(
     (vertex) =>
       vertex.edges.length === 2 &&
@@ -128,42 +130,59 @@ const checkParallel = (nodes, inputId, outputId) => {
               vertex.edges[0].source.id === outputId))))
   );
 };
-
+*/
 /** схема - последовательная */
-const checkConsequent = (nodes, outputId) => {
-  const vertexes = nodes.filter(v => v.style === 'rectangle');
+const checkConsequent = (nodes, inputId, outputId) => {
+  const vertexes = nodes.filter(
+    (v) => v.vertex && v.style !== "input" && v.style !== "output"
+  );
   if (vertexes.length === 1) return true;
-  if (
-    vertexes.find((v) => v.style !== "rectangle") &&
-    vertexes.find((v) => v.style !== "rectangle").length > 0
-  )
-    return false;
   if (vertexes.some((v) => v.edges.length > 2)) return false;
-  let current = vertexes[0];
-  let list = [...vertexes].filter((v) => v.id !== current.id);
-  while (current && current.id !== outputId) {
-    const id = current.id;
-    const edge = current.edges.filter((e) => e.source.id === id)[0];
-    if (edge.target.id === outputId && list.length === 0) return true;
-    if (list.includes(edge.target)) {
-      current = edge.target;
-      const i = current.id;
-      list = [...list].filter((v) => v.id !== i);
-    } else {
-      return false;
+
+  let list = [...vertexes];
+  for (let vert of vertexes) {
+    if (
+      vert.edges.length === 2 &&
+      list.includes(vert) &&
+      ((vert.edges.filter(
+        (e) =>
+          ((e.source.id === inputId || e.source.id === outputId) &&
+            e.target.id === vert.id) ||
+          ((e.target.id === inputId || e.target.id === outputId) &&
+            e.source.id === vert.id)
+      ).length === 1 &&
+        vert.edges.filter(
+          (e) =>
+            (e.target.id === vert.id && e.source.style === "rectangle") ||
+            (e.source.id === vert.id && e.target.style === "rectangle")
+        ).length === 1) ||
+        vert.edges.filter(
+          (e) =>
+            (e.target.id === vert.id && e.source.style === "rectangle") ||
+            (e.source.id === vert.id && e.target.style === "rectangle")
+        ).length === 2)
+    ) {
+      list = [...list].filter((v) => v.id !== vert.id);
     }
   }
-  return false;
+  const input = nodes.filter((v) => v.style === "input")[0];
+  const output = nodes.filter((v) => v.style === "output")[0];
+  return (
+    list.length === 0 && input.edges.length === 1 && output.edges.length === 1
+  );
 };
 
 /** схема - мажоритарная */
 export const checkMajority = (nodes, inputId, outputId) => {
-  const vertexes = nodes.filter(v => v.style === 'rectangle');
-  if (vertexes.length !== 3) return false;
+  const vertexes = nodes.filter(
+    (v) => v.vertex && v.style !== "input" && v.style !== "output"
+  );
+  if (vertexes.length !== 4) return false;
   let list = [...vertexes];
   for (let vert of vertexes) {
     if (
-      vert.edges.length === 3 &&
+      vert.edges.length === 2 &&
+      list.includes(vert) &&
       vert.edges.filter(
         (e) =>
           ((e.source.id === inputId || e.source.id === outputId) &&
@@ -175,8 +194,30 @@ export const checkMajority = (nodes, inputId, outputId) => {
         (e) =>
           (e.target.id === vert.id && e.source.style === "rectangle") ||
           (e.source.id === vert.id && e.target.style === "rectangle")
-      ).length === 2 &&
-      list.includes(vert)
+      ).length === 1
+    ) {
+      list = [...list].filter((v) => v.id !== vert.id);
+    }
+    if (
+      vert.edges.length === 3 &&
+      ((vert.edges.filter(
+        (e) =>
+          ((e.source.id === inputId || e.source.id === outputId) &&
+            e.target.id === vert.id) ||
+          ((e.target.id === inputId || e.target.id === outputId) &&
+            e.source.id === vert.id)
+      ).length === 1 &&
+        vert.edges.filter(
+          (e) =>
+            (e.target.id === vert.id && e.source.style === "rectangle") ||
+            (e.source.id === vert.id && e.target.style === "rectangle")
+        ).length === 2 &&
+        list.includes(vert)) ||
+        vert.edges.filter(
+          (e) =>
+            (e.target.id === vert.id && e.source.style === "rectangle") ||
+            (e.source.id === vert.id && e.target.style === "rectangle")
+        ).length === 3)
     ) {
       list = [...list].filter((v) => v.id !== vert.id);
     }
@@ -197,7 +238,9 @@ export const checkMajority = (nodes, inputId, outputId) => {
 
 /** схема - две мажоритарные */
 export const checkTwoMajorities = (nodes, inputId, outputId) => {
-  const vertexes = nodes.filter(v => v.style === 'rectangle');
+  const vertexes = nodes.filter(
+    (v) => v.vertex && v.style !== "input" && v.style !== "output"
+  );
   if (vertexes.length !== 6) return false;
   let list = [...vertexes];
   for (let vert of vertexes) {
@@ -251,16 +294,46 @@ export const checkReservedWithSwitcher = (vertexes) => {
       switcher.edges.filter(
         (e) => e.target.style === "loaded" || e.source.style === "loaded"
       ).length >= 2
-    )
-      return true;
+    ) {
+      const edgeId = switcher.edges.filter(
+        (e) => e.target.style === "rectangle" || e.source.style === "rectangle"
+      )[0].id;
+      const rectangleId = vertexes.filter(
+        (v) =>
+          v.style === "rectangle" &&
+          v.edges.filter((e) => e.id === edgeId).length === 1
+      )[0].id;
+
+      const loadeds = vertexes.filter((v) => v.style === "loaded");
+      let list = [...loadeds];
+      if (loadeds.length === 0) return false;
+      for (let loaded of loadeds) {
+        if (
+          loaded.edges.length === 2 &&
+          list.includes(loaded) &&
+          loaded.edges.filter(
+            (e) =>
+              e.source.style === "switcher" || e.target.style === "switcher"
+          ).length === 1 &&
+          loaded.edges.filter(
+            (e) => e.source.id === rectangleId || e.target.id === rectangleId
+          ).length === 1
+        ) {
+          list = [...list].filter((v) => v.id !== loaded.id);
+        }
+      }
+      return list.length === 0;
+
+    } else {
+      return false;
+    }
+  } else {
     return false;
   }
-  return false;
 };
 
 /** определяем тип схемы */
-const getType = (scheme, reservedType) => {
-  debugger
+const getType = (scheme) => {
   const inputId =
     scheme.find((node) => node.style === "input") &&
     scheme.find((node) => node.style === "input").id;
@@ -271,37 +344,35 @@ const getType = (scheme, reservedType) => {
   const types = {
     SEQUENT: "sequent",
     PARALLEL: "parallel",
-    RESERVED_LOADED: "reserved_loaded",
-    RESERVED_UNLOADED: "reserved_unloaded",
-    RESERVED_LIGHTWEIGHT: "reserved_lightweight",
+    RESERVED: "reserved",
     MAJORITY: "majority",
     TWO_MAJORITIES: "two_majorities",
     RESERVED_WITH_SWITCHER: "reserved_with_switcher",
     ONE_MAIN_MANY_RESERVED: "one_main_many_reserved",
   };
 
-  if (checkConsequent(scheme, outputId)) {
-    console.log(types.SEQUENT)
+  if (checkConsequent(scheme, inputId, outputId)) {
+    console.log(types.SEQUENT);
     return types.SEQUENT;
   }
-
+  /*
   if (checkParallel(scheme, inputId, outputId)) {
-    console.log(types.PARALLEL)
+    console.log(types.PARALLEL);
     return types.PARALLEL;
-  }
+  }*/
 
   if (checkMajority(scheme, inputId, outputId)) {
-    console.log(types.MAJORITY)
+    console.log(types.MAJORITY);
     return types.MAJORITY;
   }
 
   if (checkTwoMajorities(scheme, inputId, outputId)) {
-    console.log(types.TWO_MAJORITIES)
+    console.log(types.TWO_MAJORITIES);
     return types.TWO_MAJORITIES;
   }
 
   if (checkReservedWithSwitcher(scheme)) {
-    console.log(types.RESERVED_WITH_SWITCHER)
+    console.log(types.RESERVED_WITH_SWITCHER);
     return types.RESERVED_WITH_SWITCHER;
   }
 
@@ -309,26 +380,12 @@ const getType = (scheme, reservedType) => {
     .filter((node) => node.vertex)
     .filter((node) => node.style !== "input" && node.style !== "output");
 
-  /** резервированная и режим - нагруженная */
-  if (vertexes.find((v) => v.style === "loaded") && reservedType === LOADED) {
-    console.log(types.RESERVED_LOADED)
-    return types.RESERVED_LOADED;
+  /** резервированная */
+  if (vertexes.find((v) => v.style === "loaded")) {
+    console.log(types.RESERVED);
+    return types.RESERVED;
   }
 
-  /** резервированная и режим - ненагруженная */
-  if (vertexes.find((v) => v.style === "loaded") && reservedType === UNLOADED) {
-    console.log(types.RESERVED_UNLOADED)
-    return types.RESERVED_UNLOADED;
-  }
-
-  /** резервированная и режим - облегченная */
-  if (
-    vertexes.find((v) => v.style === "loaded") &&
-    reservedType === LIGHTWEIGHT
-  ) {
-    console.log(types.RESERVED_LIGHTWEIGHT)
-    return types.RESERVED_LIGHTWEIGHT;
-  }
   /** один основной - несколько резервных элементов */
   if (
     vertexes.find((v) => v.style === "loaded") &&
@@ -336,35 +393,74 @@ const getType = (scheme, reservedType) => {
     vertexes.find((v) => v.style === "rectangle") &&
     vertexes.find((v) => v.style === "rectangle").length === 1
   ) {
-    console.log(types.ONE_MAIN_MANY_RESERVED)
+    console.log(types.ONE_MAIN_MANY_RESERVED);
     return types.ONE_MAIN_MANY_RESERVED;
   }
 
-  return "not_defined";
+  return null;
 };
 
 /** пытаемся получить данные о типе основного и дочерних графов */
-const getTypes = (mainScheme, childScheme, reservedMode) => {
-  const type = getType(mainScheme, reservedMode);
-  const main = {
-    graph: mainScheme,
-    type,
+export const getTypes = (mainScheme, childSchemes, reservedMode) => {
+    const type = getType(mainScheme, reservedMode);
+    const main = {
+      graph: mainScheme,
+      type,
+    };
+  
+    const children =
+      childSchemes &&
+      childSchemes.length > 0 &&
+      childSchemes.map((layer) => {
+        const type = getType(layer, reservedMode);
+        return {
+          graph: layer,
+          type,
+        };
+      });
+  
+    return [main, children];
   };
+/*
+  const schemesWithoutParentId = childSchemes.map(([, scheme]) => scheme);
 
   const children =
-    childScheme &&
-    childScheme.length > 0 &&
-    childScheme.map((layer) => {
+    schemesWithoutParentId &&
+    schemesWithoutParentId.length > 0 &&
+    schemesWithoutParentId.map((layer) => {
       const type = getType(layer, reservedMode);
-      return {
-        graph: layer,
-        type,
-      };
+      let children1 = null;
+      if (type === types.RESERVED) {
+        let reservedType = null;
+        switch (reservedMode) {
+          case "loaded":
+            reservedType = types.RESERVED_LOADED;
+            break;
+          case "unloaded":
+            reservedType = types.RESERVED_UNLOADED;
+            break;
+          case "lightweight":
+            reservedType = types.RESERVED_LIGHTWEIGHT;
+            break;
+          default:
+            break;
+        }
+        return (children1 = {
+          children: mainScheme,
+          mainType: reservedType,
+        });
+      } else {
+        return (children1 = {
+          children: mainScheme,
+          mainType: type,
+        });
+      }
     });
+  
 
-  return [main, children];
+  return [main, 'children'];
 };
-
+*/
 export const compute = ({
   scheme,
   isRecoverable,
@@ -377,9 +473,7 @@ export const compute = ({
   firstMajority,
   secondMajority,
 }) => {
-  debugger
   const filteredMain = filterData(scheme);
-
   const filteredChildren = Object.entries(localStorage)
     .filter((item) => item[0].includes("mxCell"))
     .map((item) => [item[0], filterData(JSON.parse(item[1]))]);
@@ -389,13 +483,24 @@ export const compute = ({
     filteredChildren,
     reservedMode
   );
+  /*
+  const childrenWithValues = childrenTyped.reduce((acc, layer) => {
+    const { children, childrenType } = layer;
+    if (!isRecoverable) {
 
-  const { graph, type } = mainTyped;
-  const rectNum = graph.filter((v) => v.style === "rectangle").length;
-  const loadedNum = graph.filter((v) => v.style === "loaded").length;
+    } else {
+      return 1 / +failureRate;
+    }
+    console.log(layer)
+  }, []);*/
+
+  const { main, mainType } = mainTyped;
+  const rectNum = main.filter((v) => v.style === "rectangle").length;
+  const loadedNum = main.filter((v) => v.style === "loaded").length;
   if (!isRecoverable) {
     let args = [];
-    switch (type) {
+  
+    switch (mainType) {
       case types.SEQUENT:
         args = [rectNum, +failureRate, +exploitationTime];
         break;
@@ -435,8 +540,8 @@ export const compute = ({
         break;
     }
     return {
-      Pt: Number(unrecoverable[type].p(...args)).toFixed(15),
-      To: Number(unrecoverable[type].to(...args.slice(0, -1))).toFixed(15),
+      Pt: Number(unrecoverable[mainType].p(...args)).toFixed(15),
+      To: Number(unrecoverable[mainType].to(...args.slice(0, -1))).toFixed(15),
     };
   } else {
     let kgArgs = [];
@@ -447,7 +552,7 @@ export const compute = ({
     let to = null;
     let kg = null;
     let tv = null;
-    switch (type) {
+    switch (mainType) {
       case types.SEQUENT:
         kgArgs = [rectNum, +failureRate, +tve];
         toArgs = [rectNum, +failureRate];
@@ -493,8 +598,24 @@ export const compute = ({
         kogArgs = [kg, +exploitationTime, to];
         break;
       case types.MAJORITY:
+        toArgs = [+firstMajority, +secondMajority, +tve];
+        to = recoverable.majority.to(...toArgs);
+        tvArgs = [+firstMajority, +secondMajority, +tve, +tve];
+        tv = recoverable.majority.tv(...tvArgs);
+        kgArgs = [tv, to];
+        kg = recoverable.majority.kg(...kgArgs);
+        pArgs = [to, +exploitationTime];
+        kogArgs = [kg, +exploitationTime, to];
         break;
       case types.TWO_MAJORITIES:
+        toArgs = [+firstMajority, +secondMajority, +tve, +tve];
+        to = recoverable.two_majorities.to(...toArgs);
+        tvArgs = [+firstMajority, +secondMajority, +tve, +tve];
+        tv = recoverable.two_majorities.tv(...tvArgs);
+        kgArgs = [tv, to];
+        kg = recoverable.two_majorities.kg(...kgArgs);
+        pArgs = [to, +exploitationTime];
+        kogArgs = [kg, +exploitationTime, to];
         break;
       case types.RESERVED_WITH_SWITCHER:
         kgArgs = [rectNum, loadedNum, +failureRate, +switcherFailureRate, +tve];
@@ -519,11 +640,11 @@ export const compute = ({
         break;
     }
     return {
-      Pt: Number(recoverable[type].p(...pArgs)).toFixed(15),
-      To: Number(recoverable[type].to(...toArgs)).toFixed(15),
-      Tv: Number(recoverable[type].tv(...tvArgs)).toFixed(15),
-      Kg: Number(recoverable[type].kg(...kgArgs)).toFixed(15),
-      Kog: Number(recoverable[type].kog(...kogArgs)).toFixed(15),
+      Pt: Number(recoverable[mainType].p(...pArgs)).toFixed(15),
+      To: Number(recoverable[mainType].to(...toArgs)).toFixed(15),
+      Tv: Number(recoverable[mainType].tv(...tvArgs)).toFixed(15),
+      Kg: Number(recoverable[mainType].kg(...kgArgs)).toFixed(15),
+      Kog: Number(recoverable[mainType].kog(...kogArgs)).toFixed(15),
     };
   }
   // const restoredStructure = restoreGraphStructure(scheme, childGraphs);

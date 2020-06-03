@@ -30,8 +30,8 @@ const CreatePopupMenu = (graph, menu, cell, evt, setGraphNodes) => {
                 graph,
                 `Дочерние компоненты блока ${cell.mxObjectId}`,
                 modalCont,
+                600,
                 400,
-                300,
                 cell,
               );
             }

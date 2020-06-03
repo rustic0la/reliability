@@ -6,6 +6,7 @@ import {
   checkReservedWithSwitcher,
   checkMajority,
   checkTwoMajorities,
+  getTypes,
 } from "../helpers/calc/helpers";
 
 const EMPTY_GRAPH = "emptyGraph";
@@ -16,6 +17,7 @@ const NO_INPUT_OR_OUTPUT = "noInputOrOutput";
 const ELEMENT_WITHOUT_EDGES = "elementWithoutEdges";
 const M_OF_N = "mOfN";
 const SWITCHER = "switcher";
+const UNDEFINED = 'undefined';
 
 const ShemeValidator = ({ graphNodes, show, onHide }) => {
   const [isReserved, setIsReserved] = useState(false);
@@ -53,7 +55,7 @@ const ShemeValidator = ({ graphNodes, show, onHide }) => {
         return;
       }
   
-      if (isSchemeIsReserved(graphNodes, subGraphs)) {
+      if (isSchemeIsReserved(graphNodes, subGraphs) && !checkIsSwitcher(graphNodes, subGraphs)) {
         setIsReserved(true);
       }
   
@@ -80,6 +82,12 @@ const ShemeValidator = ({ graphNodes, show, onHide }) => {
   */
       if (isIncorrectMOfN(graphNodes, subGraphs)) {
         setError(M_OF_N);
+        return;
+      }
+  
+      const [main, children] = getTypes(graphNodes, subGraphs);
+      if (!main.mainType) {
+        setError(UNDEFINED);
         return;
       }
   
@@ -398,6 +406,17 @@ const ShemeValidator = ({ graphNodes, show, onHide }) => {
     </>
   );
 
+  const renderSchemeTypeIsUndefined = () => (
+    <>
+      <Modal.Header closeButton>
+        <Modal.Title>Невозможно выполнить вычисление</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ padding: "10px" }}>
+        Тип схемы не определен
+      </Modal.Body>
+    </>
+  );
+
   return (
       <Modal show={show} onHide={onHide}>
         {error === EMPTY_GRAPH && renderEmptyGraph()}
@@ -408,6 +427,7 @@ const ShemeValidator = ({ graphNodes, show, onHide }) => {
         {error === NO_INPUT_OR_OUTPUT && renderNoInputOrOutput()}
         {error === ELEMENT_WITHOUT_EDGES && renderElementWithoutEdges()}
         {error === SWITCHER && renderSwitcherWrongScheme()}
+        {error === UNDEFINED && renderSchemeTypeIsUndefined()}
         {error === null && (
           <ConditionsFormContent
             scheme={graphNodes}

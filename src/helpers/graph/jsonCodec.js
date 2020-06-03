@@ -29,7 +29,7 @@ export const stringifyWithoutCircular = (json) => {
 					(key === 'parent' || key === 'source' || key === 'target') &&
 					value !== null
 				) {
-					return value.id;
+					return { id: value.id, style: value.style};
 				} else if (key === 'value' && value !== null && value.localName) {
 					let results = {};
 					Object.keys(value.attributes).forEach((attrKey) => {
@@ -72,8 +72,8 @@ export const renderJSON = (dataModel, graph) => {
 						parent,
 						null,
 						null,
-						vertices[node.source],
-						vertices[node.target],
+						vertices[node.source && node.source.id],
+						vertices[node.target && node.target.id],
 						node.style,
 					);
 				}
