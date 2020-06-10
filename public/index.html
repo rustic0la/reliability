@@ -11,8 +11,6 @@
 			mxBasePath = 'https://jgraph.github.io/mxgraph/javascript/src/';
 		</script>
 		<script>
-			const { ipcRenderer } = require('electron');
-
 			const exitBtn = document.getElementById('close-btn');
 			exitBtn.classList = 'button btn btn-secondary';
 			exitBtn.style.fontSize = '14px';
@@ -21,7 +19,9 @@
 			exitBtn.style.width = '30%';
 
 			exitBtn.addEventListener('click', _ => {
-				ipcRenderer.send('closed');
+				const remote = require('electron').remote;
+				let w = remote.getCurrentWindow();
+				w.close();
 			});
 		</script>
 	</body>

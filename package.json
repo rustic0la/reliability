@@ -5,6 +5,8 @@
 	"main": "public/electron.js",
 	"homepage": "./",
 	"dependencies": {
+		"@rescripts/cli": "^0.0.14",
+		"@rescripts/rescript-env": "^0.0.12",
 		"@testing-library/jest-dom": "^4.2.4",
 		"@testing-library/react": "^9.4.0",
 		"@testing-library/user-event": "^7.2.1",
@@ -24,22 +26,30 @@
 	"build": {
 		"appId": "com.example.electron-cra",
 		"files": [
-			"build/**/*",
-			"node_modules/**/*"
+		  "build/**/*",
+		  "node_modules/**/*"
 		],
-		"directories": {
-			"buildResources": "assets"
+		"directories":{
+		  "buildResources": "assets"
+		},
+		"win": {
+			"target": "portable"
+		},
+		"mac": {
+			"target": "dmg"
 		}
 	},
 	"scripts": {
 		"start": "react-scripts start",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
+    	"build": "react-scripts build",
+    	"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"electron-dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
-		"preelectron-pack": "npm build",
+		"preelectron-pack": "yarn build",
 		"postinstall": "electron-builder install-app-deps",
-		"electron-pack": "electron-builder build -mw"
+		"electron-pack-win": "electron-builder --win --ia32 -c.extraMetadata.main=build/electron.js",
+		"electron-pack": "electron-builder --mac -c.extraMetadata.main=build/electron.js"
+
 	},
 	"eslintConfig": {
 		"extends": "react-app"

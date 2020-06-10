@@ -1,20 +1,10 @@
-const integrate = (fn, a, b) => {
-  let area = 0;
-  const dx = 0.0001;
-  for (let x = a; x < b; x += dx) {
-    area += fn(x) * dx;
-  }
-  return area;
-};
-
-const factorial = (m) => (m < 2 ? m : m * factorial(m - 1));
+const factorial = (m) => (m === 0 ? 1 : m < 2 ? m : m * factorial(m - 1));
 
 const combine = (n, k) => (factorial(n) / factorial(n - k)) * factorial(k);
 
 //! Невосстанавливавемые
-
 export const unrecoverable = {
-  sequent: {
+  serial: {
     p: (n, lamb, t) => {
       let prod = 1;
       for (let i = 0; i < n; i += 1) {
@@ -30,10 +20,30 @@ export const unrecoverable = {
       return 1 / sum;
     },
   },
+  parallel: {
+    p: (n, lamb, t) => {
+      let prod = 1;
+      let sum = 0;
+      for (let i = 0; i < n; i += 1) {
+        prod *= Math.exp(-lamb * t);
+        sum += Math.exp(-lamb * t);
+      }
+      return sum - prod;
+    },
+    to: (n, lamb) => {
+      let prod = 1;
+      let sum = 0;
+      for (let i = 0; i < n; i += 1) {
+        prod *= 1 / lamb;
+        sum += 1 / lamb;
+      }
+      return sum - prod;
+    },
+  },
   reserved_loaded: {
     p: (n, m, lambda, t) => {
       let res = 0;
-      for (let i = 0; i < m; i += 1) {
+      for (let i = 0; i <= m; i += 1) {
         res +=
           combine(n + m, i) *
           Math.exp(-(n + m - i) * lambda * t) *
@@ -43,7 +53,7 @@ export const unrecoverable = {
     },
     to: (n, m, lambda) => {
       let res = 0;
-      for (let i = 0; i < m; i += 1) {
+      for (let i = 0; i <= m; i += 1) {
         res += 1 / (n + m - i);
       }
       return res * (1 / lambda);
@@ -59,9 +69,9 @@ export const unrecoverable = {
       }
       prod = prod / (alpha ** m * factorial(m));
 
-      for (let i = 0; i < m; i += 1) {
+      for (let i = 0; i <= m; i += 1) {
         summ +=
-          //((-1) ** i) *
+          ((-1) ** i) *
           (combine(m, i) / (n + i * alpha)) *
           Math.exp(-(n + i * alpha) * lambda * t);
         console.log("summ", i, summ);
@@ -142,7 +152,7 @@ export const unrecoverable = {
 
 //! восстанавливавемые
 export const recoverable = {
-  sequent: {
+  serial: {
     kg: (n, lamb, tve) => {
       let prod = 1;
       for (let i = 1; i < n; i += 1) {
@@ -173,7 +183,41 @@ export const recoverable = {
       return prod;
     },
   },
-
+  parallel: {
+    kg: (n, lamb, tve) => {
+      let prod = 1;
+      let sum = 0;
+      for (let i = 1; i < n; i += 1) {
+        prod *= 1 / (1 + lamb * tve);
+        sum += 1 / (1 + lamb * tve);
+      }
+      return sum - prod;
+    },
+    to: (n, lamb) => {
+      let prod = 1;
+      let sum = 0;
+      for (let i = 0; i < n; i += 1) {
+        prod *= lamb;
+        sum += lamb;
+      }
+      return 1 / (sum - prod);
+    },
+    tv: (kg, to) => (to * (1 - kg)) / kg,
+    p: (n, lamb, t) => {
+      let prod = 1;
+      for (let i = 1; i < n; i += 1) {
+        prod *= Math.exp(-lamb * t);
+      }
+      return prod;
+    },
+    kog: (n, lamb, tve, t) => {
+      let prod = 1;
+      for (let i = 1; i < n; i += 1) {
+        prod *= (1 / (1 + lamb * tve)) * Math.exp(-lamb * t);
+      }
+      return prod;
+    },
+  },
   reserved_loaded: {
     kg: (tv, to) => 1 / (1 + tv / to),
     to: (n, m, lambda, tve) => {
@@ -193,7 +237,7 @@ export const recoverable = {
     kg: (tv, to) => 1 / (1 + tv / to),
     to: (n, m, lambda, tve) => {
       let sum1 = 0;
-      for (let i = 1; i <= m; i += 1) {
+      for (let i = 0; i < m; i += 1) {
         sum1 += (combine(m, i) * factorial(i)) / (n * lambda * tve) ** i;
       }
       return (1 / (n * lambda)) * sum1;
@@ -214,7 +258,7 @@ export const recoverable = {
         sum1 += ((lambda * tve) ** i / factorial(i)) * prod1;
       }
       let prod2 = 1;
-      for (let r = 1; r < m + 1; r += 1) {
+      for (let r = 0; r < m + 1; r += 1) {
         prod2 *= n + (m + 1 - r) * alpha;
       }
       return (
@@ -265,38 +309,6 @@ export const recoverable = {
       );
     },
     tv: (to, kg) => (to * (1 - kg)) / kg,
-    p: (to, t) => Math.exp(-t / to),
-    kog: (kg, t, to) => kg * Math.exp(-t / to),
-  },
-  one_main_many_reserved: {
-    // m + 1 = N
-    kg: (m, lambda, tve) => {
-      let prod1 = 1;
-      for (let j = 0; j < m + 1; j += 1) {
-        prod1 *= (lambda * tve) / (1 + lambda * tve);
-      }
-      return 1 - prod1;
-    },
-    to: (m, lambda, tve) => {
-      let prod1 = 1;
-      let prod2 = 1;
-      let prod3 = 1;
-      let prod4 = 1;
-      for (let j = 1; j < m + 1; j += 1) {
-        prod1 *= 1 + lambda * tve;
-        prod2 *= lambda * tve;
-        prod3 *= 1 / tve;
-        prod4 *= lambda * tve;
-      }
-      return (prod1 - prod2) / (prod3 * prod4);
-    },
-    tv: (m, tve) => {
-      let sum1 = 0;
-      for (let j = 0; j < m + 1; j += 1) {
-        sum1 += 1 / tve;
-      }
-      return 1 / sum1;
-    },
     p: (to, t) => Math.exp(-t / to),
     kog: (kg, t, to) => kg * Math.exp(-t / to),
   },

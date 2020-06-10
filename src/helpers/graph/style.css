@@ -114,7 +114,7 @@ div.tbContainer {
 }
 
 div.mxWindowPane {
-	position: inherit;
+	position: inherit !important;
 }
 
 div.mxWindow {
