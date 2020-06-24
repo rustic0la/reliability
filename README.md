@@ -1,4 +1,4 @@
-## Application for redundant systems reliability assesment
+## Application for redundant systems reliability assessment
 
 - mxGraph
 - React
