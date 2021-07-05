@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
-import {
-  mxGraph,
-  mxOutline,
-  mxToolbar,
-  mxEvent,
-} from "mxgraph-js";
+import React, { FC, useEffect } from "react";
+import mx from '../mxgraph';
+import { mxGraph, mxToolbar } from 'mxgraph';
 
 import "../helpers/graph/style.css";
 import setGraphConfig from "../helpers/graph/setGraphConfig";
 import { getJsonModel } from "../helpers/graph/jsonCodec";
 
-const GraphContainer = ({ setGraphNodes }) => {
+interface GraphContainerProps {
+  setGraphNodes: () => void;
+}
+
+const GraphContainer: FC<GraphContainerProps> = ({ setGraphNodes }) => {
 
   useEffect(() => {
     loadGraph();
@@ -34,16 +34,16 @@ const GraphContainer = ({ setGraphNodes }) => {
     const sbContainer = document.getElementById("sbContainer");
 
     /** инициализация графа */
-    const graph = new mxGraph(container);
-    const sidebar = new mxToolbar(sbContainer);
+    const graph: mxGraph = new mx.mxGraph(container);
+    const sidebar: mxToolbar = new mx.mxToolbar(sbContainer);
 
     /** сеттинг конфигурации графа */
     setGraphConfig(graph, tbContainer, sidebar, setGraphNodes);
 
-    new mxOutline(graph, outlineContainer);
+    new mx.mxOutline(graph, outlineContainer);
 
     /** при изменении графа происходит его сохранение в graphNodes */
-    graph.model.addListener(mxEvent.CHANGE, () => {
+    graph.model.addListener(mx.mxEvent.CHANGE, () => {
       const jsonNodes = getJsonModel(graph);
       setGraphNodes(jsonNodes);
     });

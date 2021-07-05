@@ -1,5 +1,5 @@
-import { mxEvent, mxUtils, mxClipboard } from "mxgraph-js";
-import _ from 'lodash';
+import { mxCell } from 'mxgraph';
+import mx from '../../mxgraph';
 
 const addToolbarButton = (
   undoManager,
@@ -23,7 +23,7 @@ const addToolbarButton = (
     img.style.marginRight = "2px";
     button.appendChild(img);
   }
-  mxEvent.addListener(button, "click", () => {
+  mx.mxEvent.addListener(button, "click", () => {
     switch (action) {
       case "delete":
         graph.removeCells();
@@ -48,22 +48,22 @@ const addToolbarButton = (
         break;
       case "copy":
         const cells = graph.getSelectionCells();
-        mxClipboard.copy(graph, cells);
+        mx.mxClipboard.copy(graph, cells);
         break;
       case "paste":
-        mxClipboard.paste(graph);
+        mx.mxClipboard.paste(graph);
         break;
       case "vertical":
-        const alignVerticallyCells = graph.getSelectionCells();
-        const maxWidth = _.max(alignVerticallyCells.map(c => c.geometry.width))
+        const alignVerticallyCells: mxCell[] = graph.getSelectionCells();
+        const maxWidth = Math.max(alignVerticallyCells.map(c => c.geometry.width))
         const x = alignVerticallyCells[0].geometry.x;
         const centerX = x + maxWidth / 2;
         alignVerticallyCells.map(cell => cell.geometry.x = centerX - cell.geometry.width / 2);
         graph.refresh();
         break;
       case "horizontal":
-        const alignHorizontallyCells = graph.getSelectionCells();
-        const maxHeight = _.max(alignHorizontallyCells.map(c => c.geometry.height))
+        const alignHorizontallyCells: mxCell[] = graph.getSelectionCells();
+        const maxHeight = Math.max(alignHorizontallyCells.map(c => c.geometry.height))
         const y = alignHorizontallyCells[0].geometry.y;
         const centerY = y + maxHeight / 2;
         alignHorizontallyCells.map(cell => cell.geometry.y = centerY - cell.geometry.height / 2);
@@ -74,7 +74,7 @@ const addToolbarButton = (
     }
   });
 
-  mxUtils.write(button, label);
+  mx.mxUtils.write(button, label);
   toolbar.appendChild(button);
 };
 

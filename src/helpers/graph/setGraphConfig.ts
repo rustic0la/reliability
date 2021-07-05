@@ -1,17 +1,5 @@
 import { setVertexStyles, setDefaultCellsStyle } from "./setStyles";
-
-import {
-  mxEvent,
-  mxUndoManager,
-  mxGraphHandler,
-  mxEdgeHandler,
-  mxConnectionConstraint,
-  mxPoint,
-  mxConnectionHandler,
-  mxUtils,
-  mxConstraintHandler,
-  mxRubberband,
-} from "mxgraph-js";
+import mx from '../../mxgraph';
 
 import createPopupMenu from "./popupMenu";
 import addVertex from "./addVertex";
@@ -34,12 +22,12 @@ import vertical from "../../assets/images/vertical.png";
 import horizontal from "../../assets/images/horizontal.png";
 
 const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
-  const undoManager = new mxUndoManager();
+  const undoManager = new mx.mxUndoManager();
   const listener = (sender, evt) => {
     undoManager.undoableEditHappened(evt.getProperty("edit"));
   };
-  graph.getModel().addListener(mxEvent.UNDO, listener);
-  graph.getView().addListener(mxEvent.UNDO, listener);
+  graph.getModel().addListener(mx.mxEvent.UNDO, listener);
+  graph.getView().addListener(mx.mxEvent.UNDO, listener);
 
   /** свойства графа */
   graph.setConnectable(true);
@@ -64,23 +52,23 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
   };
 
   /** выделение */
-  new mxRubberband(graph);
+  new mx.mxRubberband(graph);
 
-  mxEdgeHandler.prototype.parentHighlightEnabled = true;
+  mx.mxEdgeHandler.prototype.parentHighlightEnabled = true;
 
   /** модификация способа соединения элементов */
-  mxConstraintHandler.prototype.intersects = function (
+  mx.mxConstraintHandler.prototype.intersects = function (
     icon,
     point,
     source,
     existingEdge
   ) {
-    return !source || existingEdge || mxUtils.intersects(icon.bounds, point);
+    return !source || existingEdge || mx.mxUtils.intersects(icon.bounds, point);
   };
 
   const mxConnectionHandlerUpdateEdgeState =
-    mxConnectionHandler.prototype.updateEdgeState;
-  mxConnectionHandler.prototype.updateEdgeState = function (pt, constraint) {
+    mx.mxConnectionHandler.prototype.updateEdgeState;
+  mx.mxConnectionHandler.prototype.updateEdgeState = function (pt, constraint) {
     if (pt != null && this.previous != null) {
       const constraints = this.graph.getAllConnectionConstraints(this.previous);
       let nearestConstraint = null;
@@ -112,7 +100,7 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
     graph.connectionHandler.isConnectableCell = function (cell) {
       return false;
     };
-    mxEdgeHandler.prototype.isConnectableCell = function (cell) {
+    mx.mxEdgeHandler.prototype.isConnectableCell = function (cell) {
       return graph.connectionHandler.isConnectableCell(cell);
     };
   }
@@ -120,15 +108,15 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
   graph.getAllConnectionConstraints = function (terminal) {
     if (terminal != null && this.model.isVertex(terminal.cell)) {
       return [
-        new mxConnectionConstraint(new mxPoint(0.5, 0), true),
-        new mxConnectionConstraint(new mxPoint(0, 0.5), true),
-        new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-        new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+        new mx.mxConnectionConstraint(new mx.mxPoint(0.5, 0), true),
+        new mx.mxConnectionConstraint(new mx.mxPoint(0, 0.5), true),
+        new mx.mxConnectionConstraint(new mx.mxPoint(1, 0.5), true),
+        new mx.mxConnectionConstraint(new mx.mxPoint(0.5, 1), true),
       ];
     }
   };
 
-  mxGraphHandler.prototype.guidesEnabled = true;
+  mx.mxGraphHandler.prototype.guidesEnabled = true;
 
   // добавление кнопок на тулбар
   addToolbarButton(null, graph, tbContainer, "delete", del);

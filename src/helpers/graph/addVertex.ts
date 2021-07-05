@@ -1,4 +1,4 @@
-import { mxCell, mxEvent, mxUtils, mxGeometry } from 'mxgraph-js';
+import mx from '../../mxgraph';
 
 const addSidebarIcon = (
 	graph,
@@ -14,9 +14,9 @@ const addSidebarIcon = (
 			const parent = graph.getDefaultParent();
 			graph.getModel().beginUpdate();
 			try {
-				var col1 = graph.insertVertex(parent, null, '', 0, 0, 120, 0, 'column');
+				const col1 = graph.insertVertex(parent, null, '', 0, 0, 120, 0, 'column');
 
-				var v1 = graph.insertVertex(col1, null, '1', 0, 0, 100, 30);
+				const v1 = graph.insertVertex(col1, null, '1', 0, 0, 100, 30);
 				v1.collapsed = true;
 				const vertex = graph.getModel().cloneCell(prototype);
 				vertex.geometry.x = x;
@@ -47,19 +47,19 @@ const addSidebarIcon = (
 		`${imgStyle}`,
 	);
 
-	mxEvent.addListener(img, 'mousedown', (evt) => {
+	mx.mxEvent.addListener(img, 'mousedown', (evt) => {
 		if (img.enabled === false) {
-			mxEvent.consume(evt);
+			mx.mxEvent.consume(evt);
 		}
 	});
 
-	mxUtils.makeDraggable(img, graph, funct);
+	mx.mxUtils.makeDraggable(img, graph, funct);
 
 	return img;
 };
 
 const addVertex = (graph, sidebar, icon, w, h, style, imgStyle) => {
-	const vertex = new mxCell(null, new mxGeometry(0, 0, w, h), style);
+	const vertex = new mx.mxCell(null, new mx.mxGeometry(0, 0, w, h), style);
 	vertex.setVertex(true);
 	const img = addSidebarIcon(graph, sidebar, vertex, icon, imgStyle);
 	img.enabled = true;

@@ -1,9 +1,4 @@
-import {
-	mxEvent,
-	mxWindow,
-	mxGraph,
-	mxToolbar,
-} from 'mxgraph-js';
+import mx from '../../mxgraph';
 
 import setBaseConfig from './setGraphConfig';
 import {
@@ -24,7 +19,7 @@ const childCellModal = (graph, title, content, width, height, cell) => {
 		document.body.scrollHeight || document.documentElement.scrollHeight,
 	) + coord * 5;
 
-	var wnd = new mxWindow(title, content, x, y, width, height, false, true);
+	var wnd = new mx.mxWindow(title, content, x, y, width, height, false, true);
 	wnd.setClosable(true);
 	
 	/** дублируем панели инструментов и элементов для текущего окна */
@@ -38,8 +33,8 @@ const childCellModal = (graph, title, content, width, height, cell) => {
 	sdbar.id = `sdbar${id}`;
 	document.getElementById('graphContainer').appendChild(sdbar);
 
-	const sdb = new mxToolbar(sdbar);
-	const gr = new mxGraph(content);
+	const sdb = new mx.mxToolbar(sdbar);
+	const gr = new mx.mxGraph(content);
 
 	setBaseConfig(gr, tbCont, sdb);
 	if (cell.child && cell.child.length > 0) {
@@ -52,7 +47,7 @@ const childCellModal = (graph, title, content, width, height, cell) => {
 	}
 
 	/** перед закрытием окна */
-	wnd.addListener(mxEvent.DESTROY, (evt) => {
+	wnd.addListener(mx.mxEvent.DESTROY, (evt) => {
 		const currentChildren = getJsonModel(gr);
 		if (currentChildren.length > 0) {
 			cell.setValue('*');

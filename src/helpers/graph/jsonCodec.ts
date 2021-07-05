@@ -1,6 +1,6 @@
-import { mxObjectCodec } from 'mxgraph-js';
+import mx from '../../mxgraph';
 
-class JsonCodec extends mxObjectCodec {
+class JsonCodec extends mx.mxObjectCodec {
 	constructor() {
 		super((value) => {});
 	}
@@ -16,8 +16,7 @@ class JsonCodec extends mxObjectCodec {
 
 export const getJsonModel = (graph) => {
 	const encoder = new JsonCodec();
-	const jsonModel = encoder.decode(graph.getModel());
-	return jsonModel;
+	return encoder.decode(graph.getModel());
 };
 
 export const stringifyWithoutCircular = (json) => {

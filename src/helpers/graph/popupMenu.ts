@@ -1,6 +1,5 @@
-import React from "react";
-import { mxEvent } from "mxgraph-js";
 import childCellModal from "./childCellModal";
+import mx from '../../mxgraph';
 
 const CreatePopupMenu = (graph, menu, cell, evt, setGraphNodes) => {
   if (cell && (cell.style === "rectangle" || cell.style === "loaded")) {
@@ -9,13 +8,13 @@ const CreatePopupMenu = (graph, menu, cell, evt, setGraphNodes) => {
         graph.setCellsEditable(true);
         menu.addItem("Удалить соединение", null, () => {
           graph.removeCells([cell]);
-          mxEvent.consume(evt);
+          mx.mxEvent.consume(evt);
         });
       } else {
         menu.addItem("Добавить/изменить дочерний компонент", null, () => {
           if (
             graph.isEnabled() &&
-            !mxEvent.isConsumed(evt) &&
+            !mx.mxEvent.isConsumed(evt) &&
             cell != null &&
             graph.isCellEditable(cell)
           ) {
@@ -39,13 +38,13 @@ const CreatePopupMenu = (graph, menu, cell, evt, setGraphNodes) => {
         });
         menu.addItem("Удалить блок", null, () => {
           graph.removeCells([cell]);
-          mxEvent.consume(evt);
+          mx.mxEvent.consume(evt);
         });
       }
     }
   }
 
-  return <></>;
+  //return <></>;
 };
 
 export default CreatePopupMenu;

@@ -1,6 +1,6 @@
-const factorial = (m) => (m === 0 ? 1 : m < 2 ? m : m * factorial(m - 1));
+const factorial = (m): number => (m === 0 ? 1 : m < 2 ? m : m * factorial(m - 1));
 
-const combine = (n, k) => (factorial(n) / factorial(n - k)) * factorial(k);
+const combine = (n: number, k: number): number => (factorial(n) / factorial(n - k)) * factorial(k);
 
 //! Невосстанавливавемые
 export const unrecoverable = {

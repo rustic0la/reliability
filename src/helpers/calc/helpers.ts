@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { recoverable, unrecoverable } from "./formulas";
 import { checkSerial, checkParallel, checkMajority, checkTwoMajorities, checkReservedWithSwitcher } from './types';
 
@@ -182,11 +181,11 @@ export const compute = ({
     mainWithReserveMode = mainTyped;
   }
 
-  const maxFailureRate = _.max(Object.values(failureRate).map(v => Number(v)));
+  const maxFailureRate = Math.max(Object.values(failureRate).map(v => Number(v)));
   
   const { main, mainType } = mainWithReserveMode;
-  const rectNum = main.filter((v) => v.style === "rectangle").length;
-  const loadedNum = main.filter((v) => v.style === "loaded").length;
+  const rectNum: number = main.filter((v) => v.style === "rectangle").length;
+  const loadedNum: number = main.filter((v) => v.style === "loaded").length;
   const loadedLambdaMain = loadedLambda.main;
   if (!isRecoverable) {
     let args = [];

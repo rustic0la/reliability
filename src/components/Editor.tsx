@@ -18,14 +18,17 @@ const Editor = () => {
     setShowValidator(false);
   }
 
+  const handleMenuButtonClick = () => {
+      const closeButton = document.getElementById("close-btn");
+      if (closeButton) closeButton.style.visibility = "visible"
+  }
+
   return (
     <>
       <GraphContainer setGraphNodes={setGraphNodes} />
       <Link to={"/"} style={{ position: "absolute", top: "3px", left: "5px" }}>
         <Button
-          onClick={() => {
-            document.getElementById("close-btn").style.visibility = "visible";
-          }}
+          onClick={handleMenuButtonClick}
           style={{
             fontSize: "16px",
             padding: "3px 10px",
