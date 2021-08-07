@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { InputGroup, FormControl, Modal, Button } from "react-bootstrap";
-import { compute, LOADED } from "../helpers/calc/helpers";
+import { compute, LOADED } from "../helpers/calculations/utils/utils";
 import Output from "./Output";
 import FormItem from "./FormItem";
 

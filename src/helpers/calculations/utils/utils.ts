@@ -1,5 +1,8 @@
-import { recoverable, unrecoverable } from "./formulas";
-import { checkSerial, checkParallel, checkMajority, checkTwoMajorities, checkReservedWithSwitcher } from './types';
+import { recoverable } from "../formulas/recoverableSchemeType";
+import { unrecoverable } from "../formulas/unrecoverableSchemeType";
+
+import {  isParallel } from '../../defineSchemeType/types';
+import { isReservedWithSwitcher, isTwoMajorities, isMajority, isSerial } from '../../defineSchemeType'
 
 export const LOADED = "loaded";
 const UNLOADED = "unloaded";
@@ -16,6 +19,18 @@ export const types = {
   TWO_MAJORITIES: "two_majorities",
   RESERVED_WITH_SWITCHER: "reserved_with_switcher",
 };
+
+export enum SCHEME_TYPE {
+  SERIAL,
+    PARALLEL,
+    RESERVED,
+    RESERVED_LOADED,
+    RESERVED_UNLOADED,
+    RESERVED_LIGHTWEIGHT,
+    MAJORITY,
+    TWO_MAJORITIES,
+    RESERVED_WITH_SWITCHER,
+}
 
 const filterData = (data) => {
   const propsToFilter = [
@@ -84,27 +99,27 @@ const getType = (schemeObj, schemeType) => {
     RESERVED_WITH_SWITCHER: "reserved_with_switcher",
   };
 
-  if (checkSerial(scheme, inputId, outputId)) {
+  if (isSerial(scheme, inputId, outputId)) {
     console.log(types.SERIAL);
     return types.SERIAL;
   }
 
-  if (checkParallel(scheme, inputId, outputId)) {
+  if (isParallel(scheme, inputId, outputId)) {
     console.log(types.PARALLEL);
     return types.PARALLEL;
   }
 
-  if (checkMajority(scheme, inputId, outputId)) {
+  if (isMajority(scheme, inputId, outputId)) {
     console.log(types.MAJORITY);
     return types.MAJORITY;
   }
 
-  if (checkTwoMajorities(scheme, inputId, outputId)) {
+  if (isTwoMajorities(scheme, inputId, outputId)) {
     console.log(types.TWO_MAJORITIES);
     return types.TWO_MAJORITIES;
   }
 
-  if (checkReservedWithSwitcher(scheme)) {
+  if (isReservedWithSwitcher(scheme)) {
     console.log(types.RESERVED_WITH_SWITCHER);
     return types.RESERVED_WITH_SWITCHER;
   }

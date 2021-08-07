@@ -2,8 +2,6 @@
 	"name": "relia",
 	"version": "0.1.0",
 	"private": true,
-	"main": "public/electron.js",
-	"homepage": "./",
 	"dependencies": {
 		"bootstrap": "^4.4.1",
 		"mxgraph": "github:jgraph/mxgraph",
@@ -17,7 +15,7 @@
 	"scripts": {
 		"start": "react-scripts start",
 		"build": "react-scripts build",
-		"test": "react-scripts test",
+		"test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!your-module-name)/\"",
 		"eject": "react-scripts eject"
 	},
 	"eslintConfig": {

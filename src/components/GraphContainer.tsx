@@ -2,9 +2,9 @@ import React, { FC, useEffect } from "react";
 import mx from '../mxgraph';
 import { mxGraph, mxToolbar } from 'mxgraph';
 
-import "../helpers/graph/style.css";
-import setGraphConfig from "../helpers/graph/setGraphConfig";
-import { getJsonModel } from "../helpers/graph/jsonCodec";
+import "../helpers/graphUtils/style.css";
+import setGraphConfig from "../helpers/graphUtils/setGraphConfig";
+import { getJsonModel } from "../helpers/graphUtils/jsonCodec";
 
 interface GraphContainerProps {
   setGraphNodes: () => void;

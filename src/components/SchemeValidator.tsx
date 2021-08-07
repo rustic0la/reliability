@@ -2,18 +2,21 @@ import React from "react";
 import { Modal } from "react-bootstrap";
 
 import ConditionsFormContent from "./ConditionsForm";
-import { getTypes } from "../helpers/calc/helpers";
+import { getTypes } from "../helpers/calculations/utils/utils";
 import {
   isEmptyGraph,
-  isNoRectangles,
-  isNoInputOrOutput,
-  isElementWithoutEdges,
-  checkIsSwitcher,
-  checkIsSwitcherSchemeCorrect,
-  isIncorrectMOfN,
-} from "../helpers/calc/validate";
+} from "../helpers/calculations/validateScheme/isEmptyGraph";
 
-const ShemeValidator = ({ graphNodes, show, onHide }) => {
+import {isElementWithoutEdges } from '../helpers/calculations/validateScheme/isElementWithoutEdges';
+import { isNoInputOrOutput } from '../helpers/calculations/validateScheme/isNoInputOrOutput';
+import { isIncorrectMOfN } from '../helpers/calculations/validateScheme/isIncorrectMOfN';
+import { isSwitcherSchemeCorrect } from '../helpers/calculations/validateScheme/isSwitcherSchemeCorrect';
+import { isSwitcher } from '../helpers/calculations/validateScheme/isSwitcher';
+import { isNoRectangles } from '../helpers/calculations/validateScheme/isNoRectangles'
+
+
+
+const SchemeValidator = ({ graphNodes, show, onHide }) => {
   const subGraphsJSON = Object.entries(localStorage).filter((item) =>
     item[0].includes("mxCell")
   );
@@ -73,8 +76,8 @@ const ShemeValidator = ({ graphNodes, show, onHide }) => {
     );
   }
 
-  if (checkIsSwitcher(graphNodes, subGraphs)) {
-    if (checkIsSwitcherSchemeCorrect(graphNodes, subGraphs)) {
+  if (isSwitcher(graphNodes, subGraphs)) {
+    if (isSwitcherSchemeCorrect(graphNodes, subGraphs)) {
       return (
         <Modal show={show} onHide={onHide}>
           <Modal.Header closeButton>
@@ -122,4 +125,4 @@ const ShemeValidator = ({ graphNodes, show, onHide }) => {
     </Modal>
   );
 };
-export default ShemeValidator;
+export default SchemeValidator;
