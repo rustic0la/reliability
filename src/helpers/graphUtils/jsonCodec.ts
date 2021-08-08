@@ -11,7 +11,7 @@ class JsonCodec extends mx.mxObjectCodec {
                 const currentCell = model.getCell(iCell);
                 return currentCell.value !== undefined ? currentCell : null;
             })
-            .filter((item) => item === null) as mxCell[];
+            .filter((item) => item !== null) as mxCell[];
     }
 }
 

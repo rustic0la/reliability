@@ -18,11 +18,6 @@ const Editor = () => {
         setShowValidator(false);
     };
 
-    const handleMenuButtonClick = () => {
-        const closeButton = document.getElementById('close-btn');
-        if (closeButton) closeButton.style.visibility = 'visible';
-    };
-
     return (
         <>
             <GraphContainer setGraphNodes={setGraphNodes} />
@@ -31,7 +26,6 @@ const Editor = () => {
                 style={{ position: 'absolute', top: '3px', left: '5px' }}
             >
                 <Button
-                    onClick={handleMenuButtonClick}
                     style={{
                         fontSize: '16px',
                         padding: '3px 10px',

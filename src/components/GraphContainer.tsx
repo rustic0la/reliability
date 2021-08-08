@@ -36,6 +36,7 @@ const GraphContainer: FC<GraphContainerProps> = ({ setGraphNodes }) => {
         const graph: mxGraph = new mx.mxGraph(container as HTMLElement);
         const sidebar: mxToolbar = new mx.mxToolbar(sbContainer as HTMLElement);
 
+        mx.mxEvent.disableContextMenu(container as HTMLElement);
         /** сеттинг конфигурации графа */
         setGraphConfig(graph, tbContainer, sidebar, setGraphNodes);
 

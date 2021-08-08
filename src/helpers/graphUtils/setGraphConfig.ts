@@ -57,6 +57,7 @@ const setGraphConfig = (
         cell: any,
         evt: any,
     ) {
+        console.log('evt', evt);
         return createPopupMenu(graph, menu, cell, evt, setGraphNodes);
     };
 

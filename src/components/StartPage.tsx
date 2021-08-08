@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 const StartPage = () => {
     const handleClick = () => {
         localStorage.clear();
-        const closeButton = document.getElementById('close-btn');
-        if (closeButton) closeButton.style.visibility = 'hidden';
     };
 
     return (
