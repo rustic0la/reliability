@@ -3,18 +3,8 @@ import { Modal } from "react-bootstrap";
 
 import ConditionsFormContent from "./ConditionsForm";
 import { getTypes } from "../helpers/calculations/utils/utils";
-import {
-  isEmptyGraph,
-} from "../helpers/calculations/validateScheme/isEmptyGraph";
 
-import {isElementWithoutEdges } from '../helpers/calculations/validateScheme/isElementWithoutEdges';
-import { isNoInputOrOutput } from '../helpers/calculations/validateScheme/isNoInputOrOutput';
-import { isIncorrectMOfN } from '../helpers/calculations/validateScheme/isIncorrectMOfN';
-import { isSwitcherSchemeCorrect } from '../helpers/calculations/validateScheme/isSwitcherSchemeCorrect';
-import { isSwitcher } from '../helpers/calculations/validateScheme/isSwitcher';
-import { isNoRectangles } from '../helpers/calculations/validateScheme/isNoRectangles'
-
-
+import { isElementWithoutEdges, isNoInputOrOutput, isIncorrectMOfN, isSwitcherSchemeCorrect, isSwitcher, isNoRectangles, isEmptyGraph} from '../helpers/calculations/validateScheme';
 
 const SchemeValidator = ({ graphNodes, show, onHide }) => {
   const subGraphsJSON = Object.entries(localStorage).filter((item) =>
