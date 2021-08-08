@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import { mxCell } from 'mxgraph';
 
 import GraphContainer from './GraphContainer';
 import SchemeValidator from './SchemeValidator';
 
 const Editor = () => {
-    const [graphNodes, setGraphNodes] = useState([]);
+    const [graphNodes, setGraphNodes] = useState<mxCell[]>([]);
     const [showValidator, setShowValidator] = useState(false);
 
     const handleCalcClick = () => {

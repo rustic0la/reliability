@@ -21,9 +21,14 @@ import paste from '../../assets/images/paste.png';
 import vertical from '../../assets/images/vertical.png';
 import horizontal from '../../assets/images/horizontal.png';
 
-const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
+const setGraphConfig = (
+    graph: any,
+    tbContainer: any,
+    sidebar: any,
+    setGraphNodes: any,
+) => {
     const undoManager = new mx.mxUndoManager();
-    const listener = (sender, evt) => {
+    const listener = (sender: any, evt: any) => {
         undoManager.undoableEditHappened(evt.getProperty('edit'));
     };
     graph.getModel().addListener(mx.mxEvent.UNDO, listener);
@@ -42,12 +47,16 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
     graph.setDropEnabled(true);
     graph.setTooltips(true);
 
-    graph.getTooltip = (state) => {
+    graph.getTooltip = (state: any) => {
         const cell = state.cell;
         return cell.mxObjectId;
     };
 
-    graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+    graph.popupMenuHandler.factoryMethod = function (
+        menu: any,
+        cell: any,
+        evt: any,
+    ) {
         return createPopupMenu(graph, menu, cell, evt, setGraphNodes);
     };
 
@@ -57,6 +66,7 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
     mx.mxEdgeHandler.prototype.parentHighlightEnabled = true;
 
     /** модификация способа соединения элементов */
+    // @ts-ignore
     mx.mxConstraintHandler.prototype.intersects = function (
         icon,
         point,
@@ -74,8 +84,10 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
         pt,
         constraint,
     ) {
+        // @ts-ignore
         if (pt != null && this.previous != null) {
             const constraints = this.graph.getAllConnectionConstraints(
+                // @ts-ignore
                 this.previous,
             );
             let nearestConstraint = null;
@@ -83,6 +95,7 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
 
             for (let i = 0; i < constraints.length; i++) {
                 const cp = this.graph.getConnectionPoint(
+                    // @ts-ignore
                     this.previous,
                     constraints[i],
                 );
@@ -104,19 +117,20 @@ const setGraphConfig = (graph, tbContainer, sidebar, setGraphNodes) => {
             }
         }
 
+        // @ts-ignore
         mxConnectionHandlerUpdateEdgeState.apply(this, arguments);
     };
 
     if (graph.connectionHandler.connectImage == null) {
-        graph.connectionHandler.isConnectableCell = function (cell) {
+        graph.connectionHandler.isConnectableCell = function (cell: any) {
             return false;
         };
-        mx.mxEdgeHandler.prototype.isConnectableCell = function (cell) {
+        mx.mxEdgeHandler.prototype.isConnectableCell = function (cell: any) {
             return graph.connectionHandler.isConnectableCell(cell);
         };
     }
 
-    graph.getAllConnectionConstraints = function (terminal) {
+    graph.getAllConnectionConstraints = function (terminal: any) {
         if (terminal != null && this.model.isVertex(terminal.cell)) {
             return [
                 new mx.mxConnectionConstraint(new mx.mxPoint(0.5, 0), true),

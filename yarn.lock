@@ -7364,14 +7364,10 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-mxgraph-js@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/mxgraph-js/-/mxgraph-js-1.0.1.tgz#21779cb4e35166ed2b24075eaa2d9447990675a3"
-  integrity sha1-IXectONRZu0rJAdeqi2UR5kGdaM=
-
-"mxgraph@github:jgraph/mxgraph":
+mxgraph@^4.2.2:
   version "4.2.2"
-  resolved "https://codeload.github.com/jgraph/mxgraph/tar.gz/ff141aab158417bd866e2dfebd06c61d40773cd2"
+  resolved "https://registry.yarnpkg.com/mxgraph/-/mxgraph-4.2.2.tgz#52336443f10ab1039be79cc3fdd2eb8c00c91ba2"
+  integrity sha512-FrJc5AxzXSqiQNF+8CyJk6VxuKO4UVPgw32FZuFZ3X9W+JqOAQBTokZhh0ZkEqGpEOyp3z778ssmBTvdrTAdqw==
 
 nan@^2.12.1:
   version "2.15.0"

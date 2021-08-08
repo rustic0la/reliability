@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { InputGroup, FormControl } from 'react-bootstrap';
-import { types } from '../helpers/calculations/utils/utils';
+import { types } from '../helpers/computations/constants';
 
 const LOADED = 'loaded';
 const UNLOADED = 'unloaded';
@@ -18,7 +18,27 @@ const typesRus = {
     reserved: 'резервированнная',
 };
 
-const FormItem = ({
+interface FormItemProps {
+    id: any;
+    type: any;
+    failureRate: any;
+    setFailureRate: any;
+    loadedLambda: any;
+    setLoadedLambda: any;
+    reservedMode: any;
+    setReservedMode: any;
+    isRecoverable: any;
+    firstMajority: any;
+    setFirstMajority: any;
+    secondMajority: any;
+    setSecondMajority: any;
+    switcherFailureRate: any;
+    setSwitcherFailureRate: any;
+    tve: any;
+    setTve: any;
+}
+
+const FormItem: FC<FormItemProps> = ({
     id,
     type,
     failureRate,
@@ -37,34 +57,34 @@ const FormItem = ({
     tve,
     setTve,
 }) => {
-    const handleFailureRateChange = (e) => {
+    const handleFailureRateChange = (e: any) => {
         setFailureRate({ ...failureRate, [id]: e.target.value });
     };
 
-    const handleTveChange = (e) => {
+    const handleTveChange = (e: any) => {
         setTve({ ...tve, [id]: e.target.value });
     };
 
-    const handleLoadedLambda = (e) => {
+    const handleLoadedLambda = (e: any) => {
         setLoadedLambda({ ...loadedLambda, [id]: e.target.value });
     };
 
-    const handleSwitcherFailureRateChange = (e) => {
+    const handleSwitcherFailureRateChange = (e: any) => {
         setSwitcherFailureRate({
             ...switcherFailureRate,
             [id]: e.target.value,
         });
     };
 
-    const handleFirstMajorityChange = (e) => {
+    const handleFirstMajorityChange = (e: any) => {
         setFirstMajority({ ...firstMajority, [id]: e.target.value });
     };
 
-    const handleSecondMajorityChange = (e) => {
+    const handleSecondMajorityChange = (e: any) => {
         setSecondMajority({ ...secondMajority, [id]: e.target.value });
     };
 
-    const handleChangeReserve = (e) => {
+    const handleChangeReserve = (e: any) => {
         setReservedMode({ ...reservedMode, [id]: e.target.value });
     };
 
@@ -80,10 +100,14 @@ const FormItem = ({
             <hr></hr>
             {id !== '0' ? (
                 <h6>
-                    Вложенная схема элемента {id} ({typesRus[type]})
+                    Вложенная схема элемента {id} ({/* @ts-ignore */}
+                    {typesRus[type]})
                 </h6>
             ) : (
-                <h6>Основная схема ({typesRus[type]})</h6>
+                <h6>
+                    Основная схема ({/* @ts-ignore */}
+                    {typesRus[type]})
+                </h6>
             )}
             {type === types.MAJORITY && (
                 <div>

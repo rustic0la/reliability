@@ -1,29 +1,30 @@
-export const isElementWithoutEdges = (graph, childLayers) => {
+export const isElementWithoutEdges = (graph: any, childLayers: any) => {
     const graphVertexes = graph
         .filter(
-            (cell) =>
+            (cell: any) =>
                 cell.vertex &&
                 cell.style !== 'input' &&
                 cell.style !== 'output',
         )
         .every(
-            (cell) => cell.hasOwnProperty('edges') && cell.edges.length >= 2,
+            (cell: any) =>
+                cell.hasOwnProperty('edges') && cell.edges.length >= 2,
         );
 
     const childVertexes =
         childLayers && childLayers.length > 0
             ? childLayers
-                  .map((ch) => ch.scheme)
-                  .map((layer) =>
+                  .map((ch: any) => ch.scheme)
+                  .map((layer: any) =>
                       layer
                           .filter(
-                              (cell) =>
+                              (cell: any) =>
                                   cell.vertex &&
                                   cell.style !== 'input' &&
                                   cell.style !== 'output',
                           )
                           .every(
-                              (cell) =>
+                              (cell: any) =>
                                   cell.hasOwnProperty('edges') &&
                                   cell.edges.length >= 2,
                           ),
@@ -33,7 +34,7 @@ export const isElementWithoutEdges = (graph, childLayers) => {
     const res =
         childVertexes === true
             ? childVertexes
-            : childVertexes.every((layer) => layer);
+            : childVertexes.every((layer: any) => layer);
 
     return !graphVertexes || !res;
 };

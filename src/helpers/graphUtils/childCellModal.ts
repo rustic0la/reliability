@@ -7,7 +7,14 @@ import {
     renderJSON,
 } from './jsonCodec';
 
-const childCellModal = (graph, title, content, width, height, cell) => {
+const childCellModal = (
+    graph: any,
+    title: any,
+    content: any,
+    width: any,
+    height: any,
+    cell: any,
+) => {
     /** id родительского элемента */
     const id = cell.mxObjectId;
     const coord = +id.split('#')[1];
@@ -28,16 +35,19 @@ const childCellModal = (graph, title, content, width, height, cell) => {
     const tbCont = document.createElement('div');
     tbCont.className = 'tbContainer';
     tbCont.id = `tbCont${id}`;
+    // @ts-ignore
     document.getElementById('graphContainer').appendChild(tbCont);
 
     const sdbar = document.createElement('div');
     sdbar.className = 'sbContainer';
     sdbar.id = `sdbar${id}`;
+    // @ts-ignore
     document.getElementById('graphContainer').appendChild(sdbar);
 
     const sdb = new mx.mxToolbar(sdbar);
     const gr = new mx.mxGraph(content);
 
+    // @ts-ignore
     setBaseConfig(gr, tbCont, sdb);
     if (cell.child && cell.child.length > 0) {
         gr.addCells(cell.child, cell);
@@ -45,6 +55,7 @@ const childCellModal = (graph, title, content, width, height, cell) => {
 
     /** если у данного элемента в памяти найдены дети - загружаем из памяти */
     if (localStorage.getItem(`${id}`) !== '') {
+        // @ts-ignore
         renderJSON(JSON.parse(localStorage.getItem(`${id}`)), gr);
     }
 
@@ -54,12 +65,15 @@ const childCellModal = (graph, title, content, width, height, cell) => {
         if (currentChildren.length > 0) {
             cell.setValue('*');
             graph.refresh();
+            // @ts-ignore
             const jsonStr = stringifyWithoutCircular(currentChildren);
             localStorage.setItem(`${id}`, jsonStr);
         }
 
         const parent = document.getElementById('graphContainer');
+        // @ts-ignore
         parent.removeChild(tbCont);
+        // @ts-ignore
         parent.removeChild(sdbar);
         graph.setEnabled(true);
     });

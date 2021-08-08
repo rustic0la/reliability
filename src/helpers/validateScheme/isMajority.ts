@@ -1,12 +1,13 @@
-import { isTwoMajorities, isMajority } from '../../defineSchemeType';
+import { mxCell } from 'mxgraph';
+import { isTwoMajorities, isMajority } from '../defineSchemeType';
 
-export const checkIsMajority = (graph, childLayers) => {
+export const checkIsMajority = (graph: mxCell[], childLayers: any) => {
     const inputId =
         graph.find((node) => node.style === 'input') &&
-        graph.find((node) => node.style === 'input').id;
+        graph.find((node) => node.style === 'input')?.id;
     const outputId =
         graph.find((node) => node.style === 'output') &&
-        graph.find((node) => node.style === 'output').id;
+        graph.find((node) => node.style === 'output')?.id;
     const main =
         isMajority(graph, inputId, outputId) ||
         isTwoMajorities(graph, inputId, outputId);
@@ -14,14 +15,14 @@ export const checkIsMajority = (graph, childLayers) => {
     const children =
         childLayers && childLayers.length > 0
             ? childLayers
-                  .map((ch) => ch.scheme)
-                  .map((layer) => {
+                  .map((ch: any) => ch.scheme)
+                  .map((layer: any) => {
                       const inputId =
-                          layer.find((node) => node.style === 'input') &&
-                          layer.find((node) => node.style === 'input').id;
+                          layer.find((node: any) => node.style === 'input') &&
+                          layer.find((node: any) => node.style === 'input').id;
                       const outputId =
-                          layer.find((node) => node.style === 'output') &&
-                          layer.find((node) => node.style === 'output').id;
+                          layer.find((node: any) => node.style === 'output') &&
+                          layer.find((node: any) => node.style === 'output').id;
                       return (
                           isMajority(layer, inputId, outputId) ||
                           isTwoMajorities(layer, inputId, outputId)
@@ -30,7 +31,7 @@ export const checkIsMajority = (graph, childLayers) => {
             : false;
 
     const res =
-        children === false ? children : children.every((layer) => layer);
+        children === false ? children : children.every((layer: any) => layer);
 
     return main || res;
 };

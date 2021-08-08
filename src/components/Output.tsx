@@ -1,7 +1,21 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { InputGroup, FormControl, Modal } from 'react-bootstrap';
 
-const Output = ({ result, show, onHide }) => {
+export interface ResultType {
+    Pt: number;
+    To: number;
+    Tv?: number;
+    Kg?: number;
+    Kog?: number;
+}
+
+interface OutputProps {
+    result: ResultType;
+    show: boolean;
+    onHide: () => void;
+}
+
+const Output: FC<OutputProps> = ({ result, show, onHide }) => {
     const { Pt, To, Tv = null, Kg = null, Kog = null } = result;
 
     return (

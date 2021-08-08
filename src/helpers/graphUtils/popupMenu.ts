@@ -1,7 +1,13 @@
 import childCellModal from './childCellModal';
 import mx from '../../mxgraph';
 
-const CreatePopupMenu = (graph, menu, cell, evt, setGraphNodes) => {
+const CreatePopupMenu = (
+    graph: any,
+    menu: any,
+    cell: any,
+    evt: any,
+    setGraphNodes: any,
+) => {
     if (cell && (cell.style === 'rectangle' || cell.style === 'loaded')) {
         if (cell.style === 'rectangle') {
             if (cell.edge === true) {

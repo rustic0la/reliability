@@ -1,4 +1,6 @@
-export const isNoInputOrOutput = (graph, childLayers) => {
+import { mxCell } from 'mxgraph';
+
+export const isNoInputOrOutput = (graph: mxCell[], childLayers: any) => {
     const main =
         graph.filter((cell) => cell.style === 'input').length === 1 &&
         graph.filter((cell) => cell.style === 'output').length === 1;
@@ -6,16 +8,17 @@ export const isNoInputOrOutput = (graph, childLayers) => {
     const children =
         childLayers && childLayers.length > 0
             ? childLayers
-                  .map((ch) => ch.scheme)
+                  .map((ch: any) => ch.scheme)
                   .map(
-                      (layer) =>
-                          layer.filter((cell) => cell.style === 'input')
+                      (layer: any) =>
+                          layer.filter((cell: any) => cell.style === 'input')
                               .length === 1 &&
-                          layer.filter((cell) => cell.style === 'output')
+                          layer.filter((cell: any) => cell.style === 'output')
                               .length === 1,
                   )
             : true;
 
-    const res = children === true ? children : children.every((layer) => layer);
+    const res =
+        children === true ? children : children.every((layer: any) => layer);
     return !main || !res;
 };

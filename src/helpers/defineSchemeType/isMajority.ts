@@ -1,11 +1,13 @@
-export function sum(a, b) {
+import { mxCell } from 'mxgraph';
+
+export function sum(a: any, b: any) {
     return a + b;
 }
 
 /** схема - мажоритарная */
-export const isMajority = (nodes, inputId, outputId) => {
+export const isMajority = (nodes: mxCell[], inputId: any, outputId: any) => {
     const vertexes = nodes.filter(
-        (v) => v.vertex && v.style !== 'input' && v.style !== 'output',
+        (v: any) => v.vertex && v.style !== 'input' && v.style !== 'output',
     );
     if (vertexes.length !== 4) return false;
     let list = [...vertexes];

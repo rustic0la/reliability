@@ -1,22 +1,22 @@
-export const isIncorrectMOfN = (graph, childLayers) => {
+export const isIncorrectMOfN = (graph: any, childLayers: any) => {
     const reMOfn = /^\d+\/\d+$/;
     const mOfn = graph
-        .filter((cell) => cell.style === 'mOfn')
-        .every((cell) => reMOfn.test(cell.value));
+        .filter((cell: any) => cell.style === 'mOfn')
+        .every((cell: any) => reMOfn.test(cell.value));
 
     const childMOfn =
         childLayers && childLayers.length > 0
             ? childLayers
-                  .map((ch) => ch.scheme)
-                  .map((layer) =>
+                  .map((ch: any) => ch.scheme)
+                  .map((layer: any) =>
                       layer
-                          .filter((cell) => cell.style === 'mOfn')
-                          .every((cell) => reMOfn.test(cell.value)),
+                          .filter((cell: any) => cell.style === 'mOfn')
+                          .every((cell: any) => reMOfn.test(cell.value)),
                   )
             : true;
 
     const res =
-        childMOfn === true ? childMOfn : childMOfn.every((layer) => layer);
+        childMOfn === true ? childMOfn : childMOfn.every((layer: any) => layer);
 
     return !mOfn || !res;
 };

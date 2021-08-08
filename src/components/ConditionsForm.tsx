@@ -1,10 +1,19 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, FC, SyntheticEvent } from 'react';
 import { InputGroup, FormControl, Modal, Button } from 'react-bootstrap';
-import { compute, LOADED } from '../helpers/calculations/utils/utils';
-import Output from './Output';
+import Output, { ResultType } from './Output';
 import FormItem from './FormItem';
+import { LOADED } from '../helpers/computations/constants';
+import { computeCharacteristics } from '../helpers/computations/computeCharacteristics';
 
-const ConditionsForm = ({ mainTyped, childrenTyped }) => {
+interface ConditionsFormProps {
+    mainTyped: any;
+    childrenTyped: any;
+}
+
+const ConditionsForm: FC<ConditionsFormProps> = ({
+    mainTyped,
+    childrenTyped,
+}) => {
     const [isRecoverable, setIsRecoverable] = useState(false);
     const [failureRate, setFailureRate] = useState({});
 
@@ -17,7 +26,7 @@ const ConditionsForm = ({ mainTyped, childrenTyped }) => {
     const [secondMajority, setSecondMajority] = useState({});
 
     const [exploitationTime, setExploitationTime] = useState(0);
-    const [output, setOutput] = useState(null);
+    const [output, setOutput] = useState<ResultType | null>(null);
     const [show, setShow] = useState(false);
 
     const handleClose = () => {
@@ -29,14 +38,15 @@ const ConditionsForm = ({ mainTyped, childrenTyped }) => {
         setIsRecoverable(!isRecoverable);
     };
 
-    const handleExploitationTimeChange = (e) => {
+    const handleExploitationTimeChange = (e: SyntheticEvent) => {
+        // @ts-ignore
         setExploitationTime(e.target.value);
     };
 
     const handleCalculateClick = useCallback(() => {
         setShow(true);
         setOutput(
-            compute({
+            computeCharacteristics({
                 mainTyped,
                 isRecoverable,
                 reservedMode,
@@ -130,7 +140,7 @@ const ConditionsForm = ({ mainTyped, childrenTyped }) => {
                         setTve={setTve}
                     />
                     {childrenTyped.length > 0 &&
-                        childrenTyped.map((childScheme) => (
+                        childrenTyped.map((childScheme: any) => (
                             <FormItem
                                 id={childScheme.child.key}
                                 type={childScheme.childType}
@@ -159,7 +169,7 @@ const ConditionsForm = ({ mainTyped, childrenTyped }) => {
                     >
                         Рассчитать
                     </Button>
-                    {show && (
+                    {show && output && (
                         <Output
                             result={output}
                             show={show}

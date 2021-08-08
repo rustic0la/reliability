@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Modal } from 'react-bootstrap';
 
 import ConditionsFormContent from './ConditionsForm';
-import { getTypes } from '../helpers/calculations/utils/utils';
+import { defineSchemeType } from '../helpers/computations/defineSchemeType';
 
 import {
     isElementWithoutEdges,
@@ -12,13 +12,25 @@ import {
     isSwitcher,
     isNoRectangles,
     isEmptyGraph,
-} from '../helpers/calculations/validateScheme';
+} from '../helpers/validateScheme';
+import { mxCell } from 'mxgraph';
 
-const SchemeValidator = ({ graphNodes, show, onHide }) => {
+interface SchemeValidatorProps {
+    graphNodes: mxCell[];
+    show: boolean;
+    onHide: () => void;
+}
+
+const SchemeValidator: FC<SchemeValidatorProps> = ({
+    graphNodes,
+    show,
+    onHide,
+}) => {
     const subGraphsJSON = Object.entries(localStorage).filter((item) =>
         item[0].includes('mxCell'),
     );
     const subGraphs = subGraphsJSON.reduce(
+        // @ts-ignore
         (acc, [key, value]) => [...acc, { key, scheme: JSON.parse(value) }],
         [],
     );
@@ -106,11 +118,13 @@ const SchemeValidator = ({ graphNodes, show, onHide }) => {
         );
     }
 
-    const [main, children] = getTypes(graphNodes, subGraphs);
+    const { main, children } = defineSchemeType(graphNodes, subGraphs);
     if (
         !main.mainType ||
         (children &&
+            // @ts-ignore
             children.length > 0 &&
+            // @ts-ignore
             children.some((ch) => !ch.childType))
     ) {
         return (

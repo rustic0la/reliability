@@ -1,9 +1,15 @@
-export function sum(a, b) {
+import { mxCell } from 'mxgraph';
+
+export function sum(a: any, b: any) {
     return a + b;
 }
 
 /** схема - две мажоритарные */
-export const isTwoMajorities = (nodes, inputId, outputId) => {
+export const isTwoMajorities = (
+    nodes: mxCell[],
+    inputId: any,
+    outputId: any,
+) => {
     const vertexes = nodes.filter(
         (v) => v.vertex && v.style !== 'input' && v.style !== 'output',
     );

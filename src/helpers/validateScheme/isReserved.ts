@@ -1,13 +1,15 @@
-export const isReserved = (graph, childLayers) => {
+import { mxCell } from 'mxgraph';
+
+export const isReserved = (graph: mxCell[], childLayers: any) => {
     const main = graph.filter((cell) => cell.style === 'loaded').length > 0;
 
     const children =
         childLayers && childLayers.length > 0
             ? childLayers
-                  .map((ch) => ch.scheme)
+                  .map((ch: any) => ch.scheme)
                   .map(
-                      (layer) =>
-                          layer.filter((cell) => cell.style === 'loaded')
+                      (layer: any) =>
+                          layer.filter((cell: any) => cell.style === 'loaded')
                               .length > 0,
                   )
             : false;

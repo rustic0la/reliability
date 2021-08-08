@@ -1,9 +1,11 @@
-export function sum(a, b) {
+import { mxCell } from 'mxgraph';
+
+export function sum(a: any, b: any) {
     return a + b;
 }
 
 /** схема - последовательная */
-export const isSerial = (nodes, inputId, outputId) => {
+export const isSerial = (nodes: mxCell[], inputId: any, outputId: any) => {
     const vertexes = nodes.filter(
         (v) => v.vertex && v.style !== 'input' && v.style !== 'output',
     );

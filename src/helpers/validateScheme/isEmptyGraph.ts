@@ -1,1 +1,1 @@
-export const isEmptyGraph = (graph) => graph.length === 0;
+export const isEmptyGraph = (graph: any) => graph.length === 0;

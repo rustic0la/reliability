@@ -1,13 +1,13 @@
 import React, { FC, useEffect } from 'react';
 import mx from '../mxgraph';
-import { mxGraph, mxToolbar } from 'mxgraph';
+import { mxCell, mxGraph, mxToolbar } from 'mxgraph';
 
 import '../helpers/graphUtils/style.css';
 import setGraphConfig from '../helpers/graphUtils/setGraphConfig';
 import { getJsonModel } from '../helpers/graphUtils/jsonCodec';
 
 interface GraphContainerProps {
-    setGraphNodes: () => void;
+    setGraphNodes: (cells: mxCell[]) => void;
 }
 
 const GraphContainer: FC<GraphContainerProps> = ({ setGraphNodes }) => {
@@ -33,13 +33,13 @@ const GraphContainer: FC<GraphContainerProps> = ({ setGraphNodes }) => {
         const sbContainer = document.getElementById('sbContainer');
 
         /** инициализация графа */
-        const graph: mxGraph = new mx.mxGraph(container);
-        const sidebar: mxToolbar = new mx.mxToolbar(sbContainer);
+        const graph: mxGraph = new mx.mxGraph(container as HTMLElement);
+        const sidebar: mxToolbar = new mx.mxToolbar(sbContainer as HTMLElement);
 
         /** сеттинг конфигурации графа */
         setGraphConfig(graph, tbContainer, sidebar, setGraphNodes);
 
-        new mx.mxOutline(graph, outlineContainer);
+        new mx.mxOutline(graph, outlineContainer as HTMLElement);
 
         /** при изменении графа происходит его сохранение в graphNodes */
         graph.model.addListener(mx.mxEvent.CHANGE, () => {

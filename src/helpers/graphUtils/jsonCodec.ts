@@ -1,26 +1,27 @@
 import mx from '../../mxgraph';
+import { mxGraph, mxGraphModel, mxCell } from 'mxgraph';
 
 class JsonCodec extends mx.mxObjectCodec {
     constructor() {
-        super((value) => {});
+        super((value: any) => {});
     }
-    decode(model) {
+    decodeModel(model: mxGraphModel) {
         return Object.keys(model.cells)
             .map((iCell) => {
                 const currentCell = model.getCell(iCell);
                 return currentCell.value !== undefined ? currentCell : null;
             })
-            .filter((item) => item !== null);
+            .filter((item) => item === null) as mxCell[];
     }
 }
 
-export const getJsonModel = (graph) => {
+export const getJsonModel = (graph: mxGraph): mxCell[] => {
     const encoder = new JsonCodec();
-    return encoder.decode(graph.getModel());
+    return encoder.decodeModel(graph.getModel());
 };
 
-export const stringifyWithoutCircular = (json) => {
-    const iter = (data) =>
+export const stringifyWithoutCircular = (json: string) => {
+    const iter = (data: any) =>
         JSON.stringify(
             data,
             (key, value) => {
@@ -39,6 +40,7 @@ export const stringifyWithoutCircular = (json) => {
                     let results = {};
                     Object.keys(value.attributes).forEach((attrKey) => {
                         const attribute = value.attributes[attrKey];
+                        // @ts-ignore
                         results[attribute.nodeName] = attribute.nodeValue;
                     });
                     return results;
@@ -52,15 +54,16 @@ export const stringifyWithoutCircular = (json) => {
     return iter(json);
 };
 
-export const renderJSON = (dataModel, graph) => {
+export const renderJSON = (dataModel: any, graph: any) => {
     let vertices = {};
     const parent = graph.getDefaultParent();
     graph.getModel().beginUpdate(); // Adds cells to the model in a single step
     try {
         dataModel &&
             // eslint-disable-next-line array-callback-return
-            dataModel.map((node) => {
+            dataModel.map((node: any) => {
                 if (node.vertex) {
+                    // @ts-ignore
                     vertices[node.id] = graph.insertVertex(
                         parent,
                         null,
@@ -71,13 +74,16 @@ export const renderJSON = (dataModel, graph) => {
                         node.geometry.height,
                         node.style,
                     );
+                    // @ts-ignore
                     vertices[node.id].mxObjectId = node.mxObjectId;
                 } else if (node.edge) {
                     graph.insertEdge(
                         parent,
                         null,
                         null,
+                        // @ts-ignore
                         vertices[node.source && node.source.id],
+                        // @ts-ignore
                         vertices[node.target && node.target.id],
                         node.style,
                     );

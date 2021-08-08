@@ -1,9 +1,11 @@
-export function sum(a, b) {
+import { mxCell } from 'mxgraph';
+
+export function sum(a: any, b: any) {
     return a + b;
 }
 
 /** схема - резервированная с переключателем */
-export const isReservedWithSwitcher = (vertexes) => {
+export const isReservedWithSwitcher = (vertexes: mxCell[]) => {
     const switcher = vertexes.find((v) => v.style === 'switcher');
     if (switcher) {
         if (

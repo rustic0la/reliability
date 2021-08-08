@@ -1,13 +1,20 @@
 import mx from '../../mxgraph';
 
 const addSidebarIcon = (
-    graph,
-    sidebar,
-    prototype,
-    image,
+    graph: any,
+    sidebar: any,
+    prototype: any,
+    image: any,
     imgStyle = 'rectangle',
 ) => {
-    const funct = (graph, evt, cell, x, y, imgStyle) => {
+    const funct = (
+        graph: any,
+        evt: any,
+        cell: any,
+        x: any,
+        y: any,
+        imgStyle: any,
+    ) => {
         graph.stopEditing(false);
 
         if (imgStyle === 'rectangle') {
@@ -48,7 +55,8 @@ const addSidebarIcon = (
     const img = sidebar.addMode(
         null,
         image,
-        (evt, cell, imgStyle) => {
+        (evt: any, cell: any, imgStyle: any) => {
+            // @ts-ignore
             const pt = this.graph.getPointForEvent(evt);
             funct(graph, evt, cell, pt.x, pt.y, imgStyle);
         },
@@ -56,7 +64,7 @@ const addSidebarIcon = (
         `${imgStyle}`,
     );
 
-    mx.mxEvent.addListener(img, 'mousedown', (evt) => {
+    mx.mxEvent.addListener(img, 'mousedown', (evt: any) => {
         if (img.enabled === false) {
             mx.mxEvent.consume(evt);
         }
@@ -67,7 +75,15 @@ const addSidebarIcon = (
     return img;
 };
 
-const addVertex = (graph, sidebar, icon, w, h, style, imgStyle) => {
+const addVertex = (
+    graph: any,
+    sidebar: any,
+    icon: any,
+    w: any,
+    h: any,
+    style: any,
+    imgStyle: any,
+) => {
     const vertex = new mx.mxCell(null, new mx.mxGeometry(0, 0, w, h), style);
     vertex.setVertex(true);
     const img = addSidebarIcon(graph, sidebar, vertex, icon, imgStyle);

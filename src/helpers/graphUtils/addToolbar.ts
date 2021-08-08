@@ -2,11 +2,11 @@ import { mxCell } from 'mxgraph';
 import mx from '../../mxgraph';
 
 const addToolbarButton = (
-    undoManager,
-    graph,
-    toolbar,
-    action,
-    image,
+    undoManager: any,
+    graph: any,
+    toolbar: any,
+    action: any,
+    image: any,
     label = '',
 ) => {
     const button = document.createElement('button');
@@ -57,6 +57,7 @@ const addToolbarButton = (
                 const alignVerticallyCells: mxCell[] =
                     graph.getSelectionCells();
                 const maxWidth = Math.max(
+                    // @ts-ignore
                     alignVerticallyCells.map((c) => c.geometry.width),
                 );
                 const x = alignVerticallyCells[0].geometry.x;
@@ -71,6 +72,7 @@ const addToolbarButton = (
                 const alignHorizontallyCells: mxCell[] =
                     graph.getSelectionCells();
                 const maxHeight = Math.max(
+                    // @ts-ignore
                     alignHorizontallyCells.map((c) => c.geometry.height),
                 );
                 const y = alignHorizontallyCells[0].geometry.y;
