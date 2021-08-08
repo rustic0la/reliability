@@ -1,26 +1,35 @@
+export function sum(a, b) {
+    return a + b;
+}
+
 /** схема - резервированная с переключателем */
 export const isReservedWithSwitcher = (vertexes) => {
-    const switcher = vertexes.find((v) => v.style === "switcher");
+    const switcher = vertexes.find((v) => v.style === 'switcher');
     if (switcher) {
         if (
             switcher.edges.length >= 3 &&
             switcher.edges.filter(
-                (e) => e.source.style === "rectangle" || e.target.style === "rectangle"
+                (e) =>
+                    e.source.style === 'rectangle' ||
+                    e.target.style === 'rectangle',
             ).length === 1 &&
             switcher.edges.filter(
-                (e) => e.target.style === "loaded" || e.source.style === "loaded"
+                (e) =>
+                    e.target.style === 'loaded' || e.source.style === 'loaded',
             ).length >= 2
         ) {
             const edgeId = switcher.edges.filter(
-                (e) => e.target.style === "rectangle" || e.source.style === "rectangle"
+                (e) =>
+                    e.target.style === 'rectangle' ||
+                    e.source.style === 'rectangle',
             )[0].id;
             const rectangleId = vertexes.filter(
                 (v) =>
-                    v.style === "rectangle" &&
-                    v.edges.filter((e) => e.id === edgeId).length === 1
+                    v.style === 'rectangle' &&
+                    v.edges.filter((e) => e.id === edgeId).length === 1,
             )[0].id;
 
-            const loadeds = vertexes.filter((v) => v.style === "loaded");
+            const loadeds = vertexes.filter((v) => v.style === 'loaded');
             let list = [...loadeds];
             if (loadeds.length === 0) return false;
             for (let loaded of loadeds) {
@@ -29,10 +38,13 @@ export const isReservedWithSwitcher = (vertexes) => {
                     list.includes(loaded) &&
                     loaded.edges.filter(
                         (e) =>
-                            e.source.style === "switcher" || e.target.style === "switcher"
+                            e.source.style === 'switcher' ||
+                            e.target.style === 'switcher',
                     ).length === 1 &&
                     loaded.edges.filter(
-                        (e) => e.source.id === rectangleId || e.target.id === rectangleId
+                        (e) =>
+                            e.source.id === rectangleId ||
+                            e.target.id === rectangleId,
                     ).length === 1
                 ) {
                     list = [...list].filter((v) => v.id !== loaded.id);

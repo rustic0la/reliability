@@ -1,7 +1,11 @@
+export function sum(a, b) {
+    return a + b;
+}
+
 /** схема - мажоритарная */
 export const isMajority = (nodes, inputId, outputId) => {
     const vertexes = nodes.filter(
-        (v) => v.vertex && v.style !== "input" && v.style !== "output"
+        (v) => v.vertex && v.style !== 'input' && v.style !== 'output',
     );
     if (vertexes.length !== 4) return false;
     let list = [...vertexes];
@@ -14,12 +18,13 @@ export const isMajority = (nodes, inputId, outputId) => {
                     ((e.source.id === inputId || e.source.id === outputId) &&
                         e.target.id === vert.id) ||
                     ((e.target.id === inputId || e.target.id === outputId) &&
-                        e.source.id === vert.id)
+                        e.source.id === vert.id),
             ).length === 1 &&
             vert.edges.filter(
                 (e) =>
-                    (e.target.id === vert.id && e.source.style === "rectangle") ||
-                    (e.source.id === vert.id && e.target.style === "rectangle")
+                    (e.target.id === vert.id &&
+                        e.source.style === 'rectangle') ||
+                    (e.source.id === vert.id && e.target.style === 'rectangle'),
             ).length === 1
         ) {
             list = [...list].filter((v) => v.id !== vert.id);
@@ -31,18 +36,22 @@ export const isMajority = (nodes, inputId, outputId) => {
                     ((e.source.id === inputId || e.source.id === outputId) &&
                         e.target.id === vert.id) ||
                     ((e.target.id === inputId || e.target.id === outputId) &&
-                        e.source.id === vert.id)
-                ).length === 1 &&
+                        e.source.id === vert.id),
+            ).length === 1 &&
                 vert.edges.filter(
                     (e) =>
-                        (e.target.id === vert.id && e.source.style === "rectangle") ||
-                        (e.source.id === vert.id && e.target.style === "rectangle")
+                        (e.target.id === vert.id &&
+                            e.source.style === 'rectangle') ||
+                        (e.source.id === vert.id &&
+                            e.target.style === 'rectangle'),
                 ).length === 2 &&
                 list.includes(vert)) ||
                 vert.edges.filter(
                     (e) =>
-                        (e.target.id === vert.id && e.source.style === "rectangle") ||
-                        (e.source.id === vert.id && e.target.style === "rectangle")
+                        (e.target.id === vert.id &&
+                            e.source.style === 'rectangle') ||
+                        (e.source.id === vert.id &&
+                            e.target.style === 'rectangle'),
                 ).length === 3)
         ) {
             list = [...list].filter((v) => v.id !== vert.id);
@@ -51,8 +60,9 @@ export const isMajority = (nodes, inputId, outputId) => {
             vert.edges.length === 2 &&
             vert.edges.every(
                 (e) =>
-                    (e.source.id === vert.id && e.target.style === "rectangle") ||
-                    (e.target.id === vert.id && e.source.style === "rectangle")
+                    (e.source.id === vert.id &&
+                        e.target.style === 'rectangle') ||
+                    (e.target.id === vert.id && e.source.style === 'rectangle'),
             ) &&
             list.includes(vert)
         ) {
