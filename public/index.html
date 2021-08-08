@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>React App</title>
-	</head>
-	<body>
-		<div id="root"></div>
-		<button id="close-btn">Выход</button>
-		<script type="text/javascript">
-			mxBasePath = 'https://jgraph.github.io/mxgraph/javascript/src/';
-		</script>
-		<script>
-			const exitBtn = document.getElementById('close-btn');
-			exitBtn.classList = 'button btn btn-secondary';
-			exitBtn.style.fontSize = '14px';
-			exitBtn.style.padding = '6px 10px';
-			exitBtn.style.margin = '10px 120px';
-			exitBtn.style.width = '30%';
+    <head>
+        <meta charset="utf-8" />
+        <title>React App</title>
+    </head>
+    <body>
+        <div id="root"></div>
+        <button id="close-btn">Выход</button>
+        <script type="text/javascript">
+            mxBasePath = 'https://jgraph.github.io/mxgraph/javascript/src/';
+        </script>
+        <script>
+            const exitBtn = document.getElementById('close-btn');
+            exitBtn.classList = 'button btn btn-secondary';
+            exitBtn.style.fontSize = '14px';
+            exitBtn.style.padding = '6px 10px';
+            exitBtn.style.margin = '10px 120px';
+            exitBtn.style.width = '30%';
 
-			exitBtn.addEventListener('click', _ => {
-				const remote = require('electron').remote;
-				let w = remote.getCurrentWindow();
-				w.close();
-			});
-		</script>
-	</body>
+            exitBtn.addEventListener('click', (_) => {
+                const remote = require('electron').remote;
+                let w = remote.getCurrentWindow();
+                w.close();
+            });
+        </script>
+    </body>
 </html>

@@ -1,133 +1,143 @@
 .rectangle {
-	width: 40px;
-	height: 40px;
-	object-fit: scale-down;
-	padding-left: 3px;
-	margin-bottom: 10px;
+    width: 40px;
+    height: 40px;
+    object-fit: scale-down;
+    padding-left: 3px;
+    margin-bottom: 10px;
 }
 
 .loaded {
-	width: 50px;
-	height: 50px;
-	object-fit: scale-down;
-	margin-bottom: 10px;
+    width: 50px;
+    height: 50px;
+    object-fit: scale-down;
+    margin-bottom: 10px;
 }
 
 .input {
-	width: 40px;
-	height: 40px;
-	object-fit: scale-down;
-	padding-left: 3px;
-	margin-bottom: 5px;
+    width: 40px;
+    height: 40px;
+    object-fit: scale-down;
+    padding-left: 3px;
+    margin-bottom: 5px;
 }
 
 .switcher {
-	width: 40px;
-	height: 40px;
-	object-fit: scale-down;
-	padding-left: 3px;
+    width: 40px;
+    height: 40px;
+    object-fit: scale-down;
+    padding-left: 3px;
 }
 
 .mOfn {
-	width: 30px;
-	height: 30px;
-	object-fit: scale-down;
-	padding-left: 8px;
-	margin-top: 10px;
+    width: 30px;
+    height: 30px;
+    object-fit: scale-down;
+    padding-left: 8px;
+    margin-top: 10px;
 }
 
 #graphContainer {
-	width: 100%;
+    width: 100%;
 }
 
 .node {
-	width: 30px;
-	height: 30px;
-	object-fit: scale-down;
-	padding-left: 8px;
+    width: 30px;
+    height: 30px;
+    object-fit: scale-down;
+    padding-left: 8px;
 }
 
 div.mxCellEditor.mxPlainTextEditor {
-	position: absolute;
+    position: absolute;
 }
 
 div.mxRubberband {
-	position: absolute;
-	overflow: hidden;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #00a2ff;
-	background: #0077ff;
+    position: absolute;
+    overflow: hidden;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #00a2ff;
+    background: #0077ff;
 }
 
 div.outlineContainer {
-	position: absolute;
-	overflow: hidden;
-	bottom: 0px;
-	right: 0px;
-	width: 200px;
-	height: 140px;
-	background: transparent;
-	border: solid black;
+    position: absolute;
+    overflow: hidden;
+    bottom: 0px;
+    right: 0px;
+    width: 200px;
+    height: 140px;
+    background: transparent;
+    border: solid black;
 }
 
 div.sbContainer {
-	position: absolute;
-	overflow: hidden;
-	top: 44px;
-	left: 0px;
-	bottom: 0px;
-	width: 62px;
-	padding-top: 10px;
-	padding-left: 14px;
-	background:  linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 15%, rgba(0,212,255,1) 100%);
+    position: absolute;
+    overflow: hidden;
+    top: 44px;
+    left: 0px;
+    bottom: 0px;
+    width: 62px;
+    padding-top: 10px;
+    padding-left: 14px;
+    background: linear-gradient(
+        0deg,
+        rgba(2, 0, 36, 1) 0%,
+        rgba(9, 9, 121, 1) 15%,
+        rgba(0, 212, 255, 1) 100%
+    );
 }
 
 div.tbContainer {
-	position: absolute;
-	white-space: nowrap;
-	overflow: hidden;
-	top: 0px;
-	left: 0px;
-	font-size: 12px;
-	right: 0px;
-	padding: 8px 85px;
-	background:  linear-gradient(270deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 15%, rgba(0,212,255,1) 100%);
+    position: absolute;
+    white-space: nowrap;
+    overflow: hidden;
+    top: 0px;
+    left: 0px;
+    font-size: 12px;
+    right: 0px;
+    padding: 8px 85px;
+    background: linear-gradient(
+        270deg,
+        rgba(2, 0, 36, 1) 0%,
+        rgba(9, 9, 121, 1) 15%,
+        rgba(0, 212, 255, 1) 100%
+    );
 }
 
 .container {
-	background: url('../../assets/images/grid.png');
-	position: absolute;
-	overflow: hidden;
-	top: 42px;
-	left: 63px;
-	bottom: 0px;
-	right: 0px;
-	max-width: calc(100% - 72px);
-	padding: 0px;
-	margin: 0px;
-	margin: 2px 6px;
+    background: url('../../assets/images/grid.png');
+    position: absolute;
+    overflow: hidden;
+    top: 42px;
+    left: 63px;
+    bottom: 0px;
+    right: 0px;
+    max-width: calc(100% - 72px);
+    padding: 0px;
+    margin: 0px;
+    margin: 2px 6px;
 }
 
 * {
-	box-sizing: content-box;
+    box-sizing: content-box;
 }
 
 div.mxWindowPane {
-	position: inherit !important;
+    position: inherit !important;
 }
 
 div.mxWindow {
-	border: 1px solid grey;
+    border: 1px solid grey;
 }
 
 .modalCont {
-	background: url('../../assets/images/grid.png');
-	position: absolute;
-	overflow: hidden;
-	top: 20px;
-	left: 0px;
-	bottom: 0px;
-	right: 0px;
-	margin: 5px 2px;
+    background: url('../../assets/images/grid.png');
+    position: absolute;
+    overflow: hidden;
+    top: 20px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    margin: 5px 2px;
 }
