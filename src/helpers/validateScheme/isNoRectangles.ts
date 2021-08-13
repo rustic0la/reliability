@@ -1,7 +1,7 @@
 import { mxCell } from 'mxgraph';
 
 export const isNoRectangles = (graph: mxCell[], childLayers: any) => {
-    const main = graph.filter((v) => v.style === 'rectangle').length > 0;
+    const main = graph.filter(v => v.style === 'rectangle').length > 0;
 
     const children =
         childLayers && childLayers.length > 0

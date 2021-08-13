@@ -141,3 +141,33 @@ div.mxWindow {
     right: 0px;
     margin: 5px 2px;
 }
+
+div.mxPopupMenu {
+    -webkit-box-shadow: 3px 3px 6px #c0c0c0;
+    -moz-box-shadow: 3px 3px 6px #c0c0c0;
+    box-shadow: 3px 3px 6px #c0c0c0;
+    background: white;
+    position: absolute;
+    border: 3px solid #e7e7e7;
+    padding: 3px;
+}
+
+table.mxPopupMenu {
+    border-collapse: collapse;
+    margin: 0;
+}
+
+tr.mxPopupMenuItem {
+    color: black;
+    cursor: default;
+}
+
+td.mxPopupMenuItem {
+    padding: 6px 10px;
+    font-size: 18px;
+}
+
+tr.mxPopupMenuItemHover {
+    background-color: #eeeeee;
+    color: black;
+}

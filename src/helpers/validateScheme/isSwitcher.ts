@@ -1,7 +1,7 @@
 import { mxCell } from 'mxgraph';
 
 export const isSwitcher = (graph: mxCell[], childLayers: any) => {
-    const main = graph.filter((cell) => cell.style === 'switcher').length > 0;
+    const main = graph.filter(cell => cell.style === 'switcher').length > 0;
 
     const children =
         childLayers && childLayers.length > 0
