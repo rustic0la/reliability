@@ -28,7 +28,7 @@ const GraphContainer: FC<GraphContainerProps> = ({ setGraphNodes }) => {
   const loadGraph = () => {
     /** получение div-элементов из DOM */
     const container = document.getElementById('container');
-    const tbContainer = document.getElementById('tbContainer');
+    const tbContainer = document.getElementById('tbContainer') as HTMLElement;
     const outlineContainer = document.getElementById('outlineContainer');
     const sbContainer = document.getElementById('sbContainer');
 

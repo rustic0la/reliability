@@ -13,7 +13,7 @@ const childCellModal = (
   title: string,
   content: HTMLDivElement,
   cell: mxCell,
-) => {
+): void => {
   /** id родительского элемента */
   const id = cell.mxObjectId;
   const coord = +id.split('#')[1];

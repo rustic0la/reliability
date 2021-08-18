@@ -106,7 +106,7 @@ div.tbContainer {
 }
 
 .container {
-    background: url('../../assets/images/grid.png');
+    background-color: rgb(216, 232, 245); /*url('../../assets/images/grid.png') ;*/
     position: absolute;
     overflow: hidden;
     top: 42px;
@@ -115,7 +115,6 @@ div.tbContainer {
     right: 0px;
     max-width: calc(100% - 72px);
     padding: 0px;
-    margin: 0px;
     margin: 2px 6px;
 }
 

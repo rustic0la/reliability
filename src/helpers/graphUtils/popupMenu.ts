@@ -7,7 +7,7 @@ const CreatePopupMenu = (
   menu: mxPopupMenu,
   cell: mxCell,
   evt: mxMouseEvent,
-) => {
+): void => {
   if (cell && (cell.style === 'rectangle' || cell.style === 'loaded')) {
     if (cell.style === 'rectangle') {
       if (cell.edge) {

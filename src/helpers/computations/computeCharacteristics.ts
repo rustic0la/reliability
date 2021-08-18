@@ -9,15 +9,37 @@ interface ComputeCharacteristicsProps {
     mainType: string;
   };
   isRecoverable: boolean;
-  reservedMode: any;
-  failureRate: any;
-  tve: any;
-  switcherFailureRate: any;
-  exploitationTime: any;
-  loadedLambda: any;
-  firstMajority: any;
-  secondMajority: any;
+  reservedMode: {
+    main: string;
+  };
+  failureRate: {
+    main: string;
+  };
+  tve: {
+    main: string;
+  };
+  switcherFailureRate: {
+    main: string;
+  };
+  exploitationTime: number;
+  loadedLambda: {
+    main: string;
+  };
+  firstMajority: {
+    main: string;
+  };
+  secondMajority: {
+    main: string;
+  };
 }
+
+export interface ComputeCharacteristicsRes {
+  Pt: number;
+  To: number;
+  Tv?: number;
+  Kg?: number;
+  Kog?: number;
+};
 
 export const computeCharacteristics = ({
   mainTyped,
@@ -30,8 +52,16 @@ export const computeCharacteristics = ({
   loadedLambda,
   firstMajority,
   secondMajority,
-}: ComputeCharacteristicsProps) => {
-  console.log('mainTyped', mainTyped, 'reservedMode', reservedMode);
+}): ComputeCharacteristicsRes => {
+  console.log('isRecoverable', isRecoverable,
+    'reservedMode', reservedMode,
+    'failureRate', failureRate,
+    'tve',tve,
+    'switcherFailureRate', switcherFailureRate,
+    'exploitationTime',exploitationTime,
+    'loadedLambda',loadedLambda,
+    'firstMajority',firstMajority,
+    'secondMajority',secondMajority,);
   let mainWithReserveMode;
   let typeReserved;
   if (mainTyped.mainType === types.RESERVED) {

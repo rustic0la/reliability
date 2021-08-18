@@ -20,18 +20,11 @@ import copy from '../../assets/images/copy.png';
 import paste from '../../assets/images/paste.png';
 import vertical from '../../assets/images/vertical.png';
 import horizontal from '../../assets/images/horizontal.png';
-import {
-  mxCell,
-  mxConnectionConstraint,
-  mxGraph,
-  mxMouseEvent,
-  mxPopupMenu,
-  mxWindow,
-} from 'mxgraph';
+import { mxCell, mxGraph, mxMouseEvent, mxPopupMenu, mxGraphModel, mxEventObject, mxToolbar, mxEvent } from 'mxgraph';
 
-const setGraphConfig = (graph: mxGraph, tbContainer: any, sidebar: any) => {
+const setGraphConfig = (graph: mxGraph, tbContainer: HTMLElement, sidebar: mxToolbar): void => {
   const undoManager = new mx.mxUndoManager();
-  const listener = (sender: any, evt: any) => {
+  const listener = (_sender: mxGraphModel, evt: mxEventObject) => {
     undoManager.undoableEditHappened(evt.getProperty('edit'));
   };
   graph.getModel().addListener(mx.mxEvent.UNDO, listener);
@@ -50,10 +43,12 @@ const setGraphConfig = (graph: mxGraph, tbContainer: any, sidebar: any) => {
   graph.setDropEnabled(true);
   graph.setTooltips(true);
 
-  graph.getTooltip = (state: any) => {
+  graph.getTooltip = (state) => {
     const cell = state.cell;
     return cell.mxObjectId;
   };
+
+  //mxEvent.disableContextMenu(document.body);
 
   graph.popupMenuHandler.factoryMethod = function (
     menu: mxPopupMenu,
@@ -69,19 +64,18 @@ const setGraphConfig = (graph: mxGraph, tbContainer: any, sidebar: any) => {
   mx.mxEdgeHandler.prototype.parentHighlightEnabled = true;
 
   /** модификация способа соединения элементов */
-  // @ts-ignore
   mx.mxConstraintHandler.prototype.intersects = function (
     icon,
     point,
     source,
     existingEdge,
   ) {
-    return !source || existingEdge || mx.mxUtils.intersects(icon.bounds, point);
+    return Boolean(!source || existingEdge || mx.mxUtils.intersects(icon.bounds, point));
   };
 
   const mxConnectionHandlerUpdateEdgeState =
     mx.mxConnectionHandler.prototype.updateEdgeState;
-  mx.mxConnectionHandler.prototype.updateEdgeState = function (pt, constraint) {
+  mx.mxConnectionHandler.prototype.updateEdgeState = function (pt) {
     // @ts-ignore
     if (pt != null && this.previous != null) {
       const constraints = this.graph.getAllConnectionConstraints(
@@ -115,20 +109,19 @@ const setGraphConfig = (graph: mxGraph, tbContainer: any, sidebar: any) => {
     }
 
     // @ts-ignore
-    mxConnectionHandlerUpdateEdgeState.apply(this, arguments);
+    mxConnectionHandlerUpdateEdgeState.apply(this, args);
   };
 
   if (graph.connectionHandler.connectImage == null) {
-    graph.connectionHandler.isConnectableCell = function (cell: any) {
+    graph.connectionHandler.isConnectableCell = function () {
       return false;
     };
-    mx.mxEdgeHandler.prototype.isConnectableCell = function (cell: any) {
+    mx.mxEdgeHandler.prototype.isConnectableCell = function (cell) {
       return graph.connectionHandler.isConnectableCell(cell);
     };
   }
 
-  // @ts-ignore
-  graph.getAllConnectionConstraints = function (terminal: any) {
+  graph.getAllConnectionConstraints = function (terminal) {
     if (terminal != null && this.model.isVertex(terminal.cell)) {
       return [
         new mx.mxConnectionConstraint(new mx.mxPoint(0.5, 0), true),
@@ -137,6 +130,7 @@ const setGraphConfig = (graph: mxGraph, tbContainer: any, sidebar: any) => {
         new mx.mxConnectionConstraint(new mx.mxPoint(0.5, 1), true),
       ];
     }
+    return [];
   };
 
   mx.mxGraphHandler.prototype.guidesEnabled = true;
