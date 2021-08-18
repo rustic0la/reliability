@@ -2,18 +2,18 @@ import React, { useState, useCallback, FC, SyntheticEvent } from 'react';
 import { InputGroup, FormControl, Modal, Button } from 'react-bootstrap';
 import Output, { ResultType } from './Output';
 import FormItem from './FormItem';
-import { LOADED } from '../helpers/computations/constants';
+import { LOADED } from '../constants';
 import { computeCharacteristics } from '../helpers/computations/computeCharacteristics';
+import { mxCell } from 'mxgraph';
 
 interface ConditionsFormProps {
-  mainTyped: any;
-  childrenTyped: any;
+  mainTyped: {
+    main: mxCell[];
+    mainType: string | null;
+  };
 }
 
-const ConditionsForm: FC<ConditionsFormProps> = ({
-  mainTyped,
-  childrenTyped,
-}) => {
+const ConditionsForm: FC<ConditionsFormProps> = ({ mainTyped }) => {
   const [isRecoverable, setIsRecoverable] = useState(false);
   const [failureRate, setFailureRate] = useState({});
 
@@ -39,11 +39,10 @@ const ConditionsForm: FC<ConditionsFormProps> = ({
   };
 
   const handleExploitationTimeChange = (e: SyntheticEvent) => {
-    // @ts-ignore
-    setExploitationTime(e.target.value);
+    const target = e.target as HTMLTextAreaElement;
+    setExploitationTime(+target.value);
   };
 
-  console.log('output', output);
   const handleCalculateClick = useCallback(() => {
     setShow(true);
     setOutput(
@@ -139,28 +138,6 @@ const ConditionsForm: FC<ConditionsFormProps> = ({
             tve={tve}
             setTve={setTve}
           />
-          {childrenTyped.length > 0 &&
-            childrenTyped.map((childScheme: any) => (
-              <FormItem
-                id={childScheme.child.key}
-                type={childScheme.childType}
-                failureRate={failureRate}
-                setFailureRate={setFailureRate}
-                loadedLambda={loadedLambda}
-                setLoadedLambda={setLoadedLambda}
-                reservedMode={reservedMode}
-                setReservedMode={setReservedMode}
-                isRecoverable={isRecoverable}
-                firstMajority={firstMajority}
-                setFirstMajority={setFirstMajority}
-                secondMajority={secondMajority}
-                setSecondMajority={setSecondMajority}
-                switcherFailureRate={switcherFailureRate}
-                setSwitcherFailureRate={setSwitcherFailureRate}
-                tve={tve}
-                setTve={setTve}
-              />
-            ))}
 
           <Button
             variant="secondary"

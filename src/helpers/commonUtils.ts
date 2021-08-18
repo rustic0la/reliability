@@ -59,3 +59,19 @@ export const isEdgeConnectedTo = (edge: mxCell, nodeType: string): boolean => {
   const { target, source } = edge;
   return target.style === nodeType || source.style === nodeType;
 };
+
+export const getInputId = (graph: mxCell[]): string => {
+  return (
+    (graph.find((node) => node.style === 'input') &&
+      graph.find((node) => node.style === 'input')?.id) ||
+    ''
+  );
+};
+
+export const getOutputId = (graph: mxCell[]): string => {
+  return (
+    (graph.find((node) => node.style === 'output') &&
+      graph.find((node) => node.style === 'output')?.id) ||
+    ''
+  );
+};

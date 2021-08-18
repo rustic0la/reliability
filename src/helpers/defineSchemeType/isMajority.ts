@@ -2,7 +2,7 @@ import {
   getVertexes,
   isEdgeConnectedToInAndOut,
   isEdgeConnectedToRect,
-} from './commonUtils';
+} from '../commonUtils';
 import { mxCell } from 'mxgraph';
 
 /** схема - мажоритарная */

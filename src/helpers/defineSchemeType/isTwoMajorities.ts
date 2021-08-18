@@ -3,7 +3,7 @@ import {
   getVertexes,
   isEdgeConnectedToInAndOut,
   isEdgeConnectedToRect,
-} from './commonUtils';
+} from '../commonUtils';
 
 /** схема - две мажоритарные */
 export const isTwoMajorities = (

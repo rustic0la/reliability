@@ -1,12 +1,12 @@
 import { unrecoverable } from '../formulas/unrecoverableSchemeType';
 import { recoverable } from '../formulas/recoverableSchemeType';
-import { LIGHTWEIGHT, LOADED, types, UNLOADED } from './constants';
+import { LIGHTWEIGHT, LOADED, types, UNLOADED } from '../../constants';
 import { mxCell } from 'mxgraph';
 
 interface ComputeCharacteristicsProps {
   mainTyped: {
     main: mxCell[];
-    mainType: string;
+    mainType: string | null;
   };
   isRecoverable: boolean;
   reservedMode: any;

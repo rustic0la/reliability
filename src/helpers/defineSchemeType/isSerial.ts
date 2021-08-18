@@ -3,7 +3,7 @@ import {
   getVertexes,
   isEdgeConnectedToInAndOut,
   isEdgeConnectedToRect,
-} from './commonUtils';
+} from '../commonUtils';
 
 /** схема - последовательная */
 export const isSerial = (

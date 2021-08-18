@@ -7,30 +7,14 @@ import {
   isSerial,
   isTwoMajorities,
 } from '../defineSchemeType';
-
-const types = {
-  SERIAL: 'serial',
-  PARALLEL: 'parallel',
-  RESERVED: 'reserved',
-  MAJORITY: 'majority',
-  TWO_MAJORITIES: 'two_majorities',
-  RESERVED_WITH_SWITCHER: 'reserved_with_switcher',
-};
+import { getInputId, getOutputId } from '../commonUtils';
+import { types } from '../../constants';
 
 /** определяем тип схемы */
-export const getType = (
-  schemeObj: mxCell[],
-  schemeType: string,
-): string | null => {
-  const scheme: mxCell[] =
-    // @ts-ignore
-    schemeType === 'children' ? schemeObj.scheme : schemeObj;
-  const inputId =
-    scheme.find((node) => node.style === 'input') &&
-    scheme.find((node) => node.style === 'input')?.id;
-  const outputId =
-    scheme.find((node) => node.style === 'output') &&
-    scheme.find((node) => node.style === 'output')?.id;
+export const getType = (schemeObj: mxCell[]): string | null => {
+  const scheme: mxCell[] = schemeObj;
+  const inputId = getInputId(scheme);
+  const outputId = getOutputId(scheme);
 
   if (isSerial(scheme, inputId, outputId)) {
     console.log(types.SERIAL);

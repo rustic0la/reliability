@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { InputGroup, FormControl } from 'react-bootstrap';
-import { types } from '../helpers/computations/constants';
+import { types } from '../constants';
 
 const LOADED = 'loaded';
 const UNLOADED = 'unloaded';

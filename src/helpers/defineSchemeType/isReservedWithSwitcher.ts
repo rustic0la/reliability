@@ -1,5 +1,5 @@
 import { mxCell } from 'mxgraph';
-import { isEdgeConnectedTo } from './commonUtils';
+import { isEdgeConnectedTo } from '../commonUtils';
 
 /** схема - резервированная с переключателем */
 export const isReservedWithSwitcher = (vertexes: mxCell[]): boolean => {

@@ -3,7 +3,7 @@ import {
   getVertexes,
   isEdgeConnectedToIn,
   isEdgeConnectedToOut,
-} from './commonUtils';
+} from '../commonUtils';
 
 /** схема - параллельная */
 export const isParallel = (
