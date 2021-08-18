@@ -1,1 +1,3 @@
-export const isEmptyGraph = (graph: any) => graph.length === 0;
+import { mxCell } from "mxgraph";
+
+export const isEmptyGraph = (graph: mxCell[]): boolean => graph.length === 0;

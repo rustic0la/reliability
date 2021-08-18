@@ -1,5 +1,3 @@
-import { sum } from '../isParallel';
+import { isParallel } from '../isParallel';
 
-test('adds 1 + 2 to equal 3', () => {
-  expect(sum(1, 2)).toBe(3);
-});
+test('', () => {});
