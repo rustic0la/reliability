@@ -9,6 +9,8 @@ interface DefineSchemeTypeRes {
 export const defineSchemeType = (mainScheme: mxCell[]): DefineSchemeTypeRes => {
   const type = getType(mainScheme);
 
+  // soon here will be children notes types defined
+
   return {
     main: mainScheme,
     mainType: type,

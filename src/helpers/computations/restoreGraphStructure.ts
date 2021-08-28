@@ -12,8 +12,8 @@ const filterData = (data: any) => {
     'mxTransient',
   ];
 
-  for (let i of data) {
-    for (let prop in i) {
+  for (const i of data) {
+    for (const prop in i) {
       if (propsToFilter.includes(prop)) {
         delete i[prop];
       }
@@ -28,9 +28,9 @@ export const restoreGraphStructure = (
 ) => {
   filterData(graphStructureNodes);
 
-  for (let subGraph of subGraphs) {
+  for (const subGraph of subGraphs) {
     const [id, graph] = subGraph;
-    for (let layerGraph of subGraphs.map((i: any) => i[1])) {
+    for (const layerGraph of subGraphs.map((i: any) => i[1])) {
       const cell = layerGraph.find((cell: mxCell) => cell.mxObjectId === id);
       if (cell) {
         cell.children = graph;
@@ -38,8 +38,8 @@ export const restoreGraphStructure = (
     }
   }
 
-  for (let i of graphStructureNodes) {
-    for (let subGraph of subGraphs) {
+  for (const i of graphStructureNodes) {
+    for (const subGraph of subGraphs) {
       const [id, data] = subGraph;
 
       if (i.mxObjectId === id) {

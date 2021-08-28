@@ -1,5 +1,5 @@
 import { mxCell } from 'mxgraph';
-import { isEdgeConnectedTo } from '../commonUtils';
+import { isEdgeConnectedToNode } from '../commonUtils';
 
 /** схема - резервированная с переключателем */
 export const isReservedWithSwitcher = (vertexes: mxCell[]): boolean => {
@@ -8,12 +8,12 @@ export const isReservedWithSwitcher = (vertexes: mxCell[]): boolean => {
 
   if (
     switcher.edges.length >= 3 &&
-    switcher.edges.filter((e) => isEdgeConnectedTo(e, 'rectangle')).length ===
+    switcher.edges.filter((e) => isEdgeConnectedToNode(e, 'rectangle')).length ===
       1 &&
-    switcher.edges.filter((e) => isEdgeConnectedTo(e, 'loaded')).length >= 2
+    switcher.edges.filter((e) => isEdgeConnectedToNode(e, 'loaded')).length >= 2
   ) {
     const edgeId = switcher.edges.filter((e) =>
-      isEdgeConnectedTo(e, 'rectangle'),
+      isEdgeConnectedToNode(e, 'rectangle'),
     )[0].id;
     const rectangleId = vertexes.filter(
       (v) =>
@@ -29,7 +29,7 @@ export const isReservedWithSwitcher = (vertexes: mxCell[]): boolean => {
       if (
         loaded.edges.length === 2 &&
         list.includes(loaded) &&
-        loaded.edges.filter((e) => isEdgeConnectedTo(e, 'switcher')).length ===
+        loaded.edges.filter((e) => isEdgeConnectedToNode(e, 'switcher')).length ===
           1 &&
         loaded.edges.filter(
           (e) => e.source.id === rectangleId || e.target.id === rectangleId,

@@ -5,3 +5,5 @@ export { isSwitcherSchemeIncorrect } from './isSwitcherSchemeIncorrect';
 export { hasSwitcher } from './hasSwitcher';
 export { hasNoVertexes } from './hasNoVertexes';
 export { isEmptyGraph } from './isEmptyGraph';
+export { hasMajority } from './hasMajority';
+export { isReserved } from './isReserved';

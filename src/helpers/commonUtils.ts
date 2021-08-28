@@ -55,7 +55,7 @@ export const isEdgeConnectedToOut = (
   );
 };
 
-export const isEdgeConnectedTo = (edge: mxCell, nodeType: string): boolean => {
+export const isEdgeConnectedToNode = (edge: mxCell, nodeType: string): boolean => {
   const { target, source } = edge;
   return target.style === nodeType || source.style === nodeType;
 };

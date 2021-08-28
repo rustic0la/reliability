@@ -11,6 +11,7 @@ import { getInputId, getOutputId } from '../commonUtils';
 import { types } from '../../constants';
 
 /** определяем тип схемы */
+// todo: change return value
 export const getType = (schemeObj: mxCell[]): string | null => {
   const scheme: mxCell[] = schemeObj;
   const inputId = getInputId(scheme);
