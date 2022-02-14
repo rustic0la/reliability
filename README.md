@@ -8,8 +8,8 @@
 
 ### How the app works:
 
-[![Calculating](./assets/calculating.gif)](./assets/calculating.gif)
+[![Calculating](./assets/1.gif)](./assets/1.gif)
 
 ### How the app handles errors while constructing the system scheme:
 
-[![Calculating](./assets/errorsHandling.gif)](./assets/errorsHandling.gif)
+[![Calculating](./assets/2.gif)](./assets/2.gif)
